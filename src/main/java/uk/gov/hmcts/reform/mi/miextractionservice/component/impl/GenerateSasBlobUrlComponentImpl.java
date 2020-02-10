@@ -13,6 +13,7 @@ import uk.gov.hmcts.reform.mi.miextractionservice.util.DateTimeUtil;
 import static uk.gov.hmcts.reform.mi.miextractionservice.domain.MiExtractionServiceConstants.QUERY_PART_DELIMITER;
 import static uk.gov.hmcts.reform.mi.miextractionservice.domain.MiExtractionServiceConstants.TIME_TO_EXPIRY;
 
+@SuppressWarnings("PMD")
 @Component
 public class GenerateSasBlobUrlComponentImpl implements GenerateBlobUrlComponent {
 
