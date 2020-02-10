@@ -30,6 +30,13 @@ public class GenerateSasBlobUrlComponentImpl implements GenerateBlobUrlComponent
             .getBlobContainerClient(containerName)
             .getBlobClient(blobName);
 
+        System.out.println(blobClient.getHttpPipeline());
+
+        for (int i = 0; i < blobClient.getHttpPipeline().getPolicyCount(); i++) {
+            System.out.println(blobClient.getHttpPipeline().getPolicy(i));
+            System.out.println(blobClient.getHttpPipeline().getPolicy(i).getClass());
+        }
+
         return String.join(QUERY_PART_DELIMITER, blobClient.getBlobUrl(), blobClient.generateSas(blobServiceSasSignatureValues));
     }
 }

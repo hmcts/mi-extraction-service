@@ -59,7 +59,7 @@ stages:
       product: $(product)
       chartEnv: $(environment)
       preIntegrationTest: true
-      functionalTest: true
+      functionalTest: false
       mutationTest: false
       azureVault: $(vault)
       azureSecreKeys: 'mi-staging-storage-connection-string,mi-export-storage-connection-string,gov-uk-notify-api-key,archive-password'
