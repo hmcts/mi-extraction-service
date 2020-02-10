@@ -11,6 +11,7 @@ mi-job:
   environment:
     STORAGE_STAGING_NAME: mipersistent{{ .Values.global.environment }}
     STORAGE_EXPORT_NAME: miexport{{ .Values.global.environment }}
+    MAIL_TARGETS: tony.chow@hmcts.net
   keyVaults:
     "mi-vault":
       resourceGroup: mi-{{ .Values.global.environment }}-rg
