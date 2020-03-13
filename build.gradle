@@ -46,6 +46,7 @@ sourceSets {
     resources.srcDir file('src/integrationTest/resources')
   }
 
+  
   smokeTest {
     java {
       compileClasspath += main.output
