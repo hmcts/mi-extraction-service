@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.mi.miextractionservice.component.ExportBlobDataCompon
 import uk.gov.hmcts.reform.mi.miextractionservice.component.FilterComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.JsonlWriterComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.MetadataFilterComponent;
+import uk.gov.hmcts.reform.mi.miextractionservice.component.impl.SftpExportComponentImpl;
 import uk.gov.hmcts.reform.mi.miextractionservice.domain.OutputCoreCaseData;
 import uk.gov.hmcts.reform.mi.miextractionservice.exception.ParserException;
 import uk.gov.hmcts.reform.mi.miextractionservice.util.DateTimeUtil;
@@ -85,6 +86,9 @@ public class CoreCaseDataExportBlobDataComponentImpl implements ExportBlobDataCo
     @Autowired
     private DateTimeUtil dateTimeUtil;
 
+    @Autowired
+    private SftpExportComponentImpl sftpExportComponentImpl;
+
     /**
      * Exports data matching date range provided as a CSV, compressed in an encrypted archive for ease of upload and download and security.
      *
@@ -126,6 +130,7 @@ public class CoreCaseDataExportBlobDataComponentImpl implements ExportBlobDataCo
             }
 
             blobContainerClient.getBlobClient(outputBlobName).uploadFromFile(outputBlobName, true);
+            sftpExportComponentImpl.copyFile(outputBlobName);
 
             // Clean up files after upload
             fileWrapper.deleteFileOnExit(workingFileName);

@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import uk.gov.hmcts.reform.mi.micore.exception.ServiceNotAvailableException;
+import uk.gov.hmcts.reform.mi.miextractionservice.component.SftpExportComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.service.BlobExportService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,18 +20,30 @@ public class HealthServiceTest {
 
     @InjectMocks
     private HealthService classToTest;
+
     @Mock
     private BlobExportService blobService;
+
+    @Mock
+    private SftpExportComponent sftpExportComponent;
 
     @Test
     public void testCheckAllDependencies() throws ServiceNotAvailableException {
         classToTest.check();
         verify(blobService, times(1)).checkStorageConnection();
+        verify(sftpExportComponent, times(1)).checkConnection();
+
     }
 
     @Test
     public void testExceptionOnDependencyFail() {
         doThrow(new RuntimeException()).when(blobService).checkStorageConnection();
+        assertThrows(ServiceNotAvailableException.class, () -> classToTest.check());
+    }
+
+    @Test
+    public void testExceptionOnSftpComponentFail() {
+        doThrow(new RuntimeException()).when(sftpExportComponent).checkConnection();
         assertThrows(ServiceNotAvailableException.class, () -> classToTest.check());
     }
 }

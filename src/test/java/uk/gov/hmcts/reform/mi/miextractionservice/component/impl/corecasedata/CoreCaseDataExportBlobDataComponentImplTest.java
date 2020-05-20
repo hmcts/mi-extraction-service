@@ -23,6 +23,7 @@ import uk.gov.hmcts.reform.mi.miextractionservice.component.CoreCaseDataFormatte
 import uk.gov.hmcts.reform.mi.miextractionservice.component.FilterComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.JsonlWriterComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.MetadataFilterComponent;
+import uk.gov.hmcts.reform.mi.miextractionservice.component.impl.SftpExportComponentImpl;
 import uk.gov.hmcts.reform.mi.miextractionservice.domain.OutputCoreCaseData;
 import uk.gov.hmcts.reform.mi.miextractionservice.exception.ParserException;
 import uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.PagedIterableStub;
@@ -67,7 +68,7 @@ import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConsta
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CCD_JSONL_OUTDATED_FUTURE;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CCD_JSONL_OUTDATED_PAST;
 
-@SuppressWarnings({"PMD.UnusedPrivateField","PMD.ExcessiveImports","PMD.TooManyMethods"})
+@SuppressWarnings({"PMD.UnusedPrivateField","PMD.ExcessiveImports","PMD.TooManyMethods", "PMD.TooManyFields"})
 @ExtendWith(SpringExtension.class)
 public class CoreCaseDataExportBlobDataComponentImplTest {
 
@@ -119,6 +120,9 @@ public class CoreCaseDataExportBlobDataComponentImplTest {
 
     @Mock
     private ArchiveComponent archiveComponent;
+
+    @Mock
+    private SftpExportComponentImpl classToTest;
 
     @Spy
     private ReaderUtil readerUtil;
@@ -213,6 +217,7 @@ public class CoreCaseDataExportBlobDataComponentImplTest {
         verify(fileWrapper).deleteFileOnExit(WORKING_FILE_NAME);
         verify(fileWrapper).deleteFileOnExit(OUTPUT_NAME);
         verify(bufferedWriter, times(1)).close();
+        verify(classToTest, times(1)).copyFile(OUTPUT_NAME);
     }
 
     @Test

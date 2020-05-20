@@ -4,17 +4,20 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.dumbster.smtp.SimpleSmtpServer;
 import com.dumbster.smtp.SmtpMessage;
 import net.lingala.zip4j.ZipFile;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 
 import uk.gov.hmcts.reform.mi.micore.factory.BlobServiceClientFactory;
 import uk.gov.hmcts.reform.mi.miextractionservice.TestConfig;
+import uk.gov.hmcts.reform.mi.miextractionservice.component.impl.SftpExportComponentImpl;
 import uk.gov.hmcts.reform.mi.miextractionservice.factory.ExtractionBlobServiceClientFactory;
 import uk.gov.hmcts.reform.mi.miextractionservice.service.BlobExportService;
 
@@ -38,11 +41,14 @@ import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.TEST
 
 @SuppressWarnings({"unchecked","PMD.AvoidUsingHardCodedIP","PMD.ExcessiveImports"})
 @SpringBootTest(classes = TestConfig.class)
+@TestPropertySource(locations = "classpath:application.properties")
 public class CoreCaseDataExportTest {
 
     private static final String AZURITE_IMAGE = String.format("%s/mi-azurite", System.getenv("AZURE_CONTAINER_REGISTRY"));
 
+    private static final String SFTP_SERVER_IMAGE = "atmoz/sftp:alpine";
     private static final Integer DEFAULT_PORT = 10_000;
+    private static final Integer SFTP_PORT = 22;
 
     private static final String DEFAULT_COMMAND = "azurite -l /data --blobHost 0.0.0.0 --loose";
     private static final String DEFAULT_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;"
@@ -52,6 +58,7 @@ public class CoreCaseDataExportTest {
     private static final String DEFAULT_HOST = "127.0.0.1";
     private static final String TEST_MAIL_ADDRESS = "TestMailAddress";
     private static final String EXTRACT_FILE_NAME = "1970-01-01-1970-01-02-CCD_EXTRACT.jsonl";
+    private static final String TEST_VERIFICATION_FILENAME = "tmp_" + TEST_EXPORT_BLOB;
 
     @Autowired
     private BlobServiceClientFactory blobServiceClientFactory;
@@ -61,6 +68,14 @@ public class CoreCaseDataExportTest {
         new GenericContainer(AZURITE_IMAGE)
             .withCommand(DEFAULT_COMMAND)
             .withExposedPorts(DEFAULT_PORT);
+
+
+    @Container
+    private static final GenericContainer SFTP_SERVER_CONTAINER =
+        new GenericContainer(SFTP_SERVER_IMAGE)
+            .withCommand("user:password:::upload")
+            .withExposedPorts(SFTP_PORT);
+
 
     @Container
     private static final GenericContainer EXPORT_CONTAINER =
@@ -79,15 +94,20 @@ public class CoreCaseDataExportTest {
     @Autowired
     private BlobExportService underTest;
 
+    @Autowired
+    private SftpExportComponentImpl sftpExportComponent;
+
     @BeforeEach
     public void setUp() throws Exception {
         dumbster = SimpleSmtpServer.start(TestConfig.mailerPort);
 
         STAGING_CONTAINER.start();
         EXPORT_CONTAINER.start();
+        SFTP_SERVER_CONTAINER.start();
 
         Integer stagingPort = STAGING_CONTAINER.getMappedPort(DEFAULT_PORT);
         Integer exportPort = EXPORT_CONTAINER.getMappedPort(DEFAULT_PORT);
+        Integer sftpPort = SFTP_SERVER_CONTAINER.getMappedPort(SFTP_PORT);
 
         stagingBlobServiceClient = blobServiceClientFactory
             .getBlobClientWithConnectionString(String.format(DEFAULT_CONN_STRING, DEFAULT_HOST, stagingPort));
@@ -95,6 +115,8 @@ public class CoreCaseDataExportTest {
         exportBlobServiceClient = blobServiceClientFactory
             .getBlobClientWithConnectionString(String.format(DEFAULT_CONN_STRING, DEFAULT_HOST, exportPort));
 
+        ReflectionTestUtils.setField(sftpExportComponent,
+                                     "port", sftpPort);
         ReflectionTestUtils.setField(extractionBlobServiceClientFactory,
             "stagingConnString", String.format(DEFAULT_CONN_STRING, DEFAULT_HOST, stagingPort));
         ReflectionTestUtils.setField(extractionBlobServiceClientFactory,
@@ -107,10 +129,11 @@ public class CoreCaseDataExportTest {
 
         STAGING_CONTAINER.stop();
         EXPORT_CONTAINER.stop();
-
+        SFTP_SERVER_CONTAINER.stop();
         // Cleanup local created files
         File exportZip = new File(TEST_EXPORT_BLOB);
         File exportFile = new File(EXTRACT_FILE_NAME);
+        File verificationZip  = new File(TEST_VERIFICATION_FILENAME);
 
         if (exportZip.exists()) {
             exportZip.delete();
@@ -118,6 +141,10 @@ public class CoreCaseDataExportTest {
 
         if (exportFile.exists()) {
             exportFile.delete();
+        }
+
+        if (verificationZip.exists()) {
+            verificationZip.delete();
         }
     }
 
@@ -161,6 +188,12 @@ public class CoreCaseDataExportTest {
             "Should have a static subject message.");
         assertTrue(email.getBody().contains(TEST_EXPORT_BLOB),
             "Should have output blob name somewhere in email body as part of the generated SAS url.");
+
+
+        sftpExportComponent.loadFile(TEST_EXPORT_BLOB, TEST_VERIFICATION_FILENAME);
+
+        File verificationFile = new File(TEST_VERIFICATION_FILENAME);
+        assertTrue(FileUtils.contentEquals(verificationFile, new File(TEST_EXPORT_BLOB)), "Should send file to sftp server");
     }
 
     @Test

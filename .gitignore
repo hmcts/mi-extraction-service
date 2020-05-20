@@ -26,3 +26,6 @@ bin/main/application.yaml
 *CCD_EXTRACT.jsonl
 *CCD_EXTRACT.zip
 unit-test-*
+
+
+*-default.properties
