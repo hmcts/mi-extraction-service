@@ -10,6 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import uk.gov.hmcts.reform.mi.micore.factory.BlobServiceClientFactory;
 import uk.gov.hmcts.reform.mi.miextractionservice.TestConfig;
+import uk.gov.hmcts.reform.mi.miextractionservice.component.SftpExportComponent;
+
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.CCD_EXPORT_CONTAINER_NAME;
@@ -24,6 +27,9 @@ public class PostDeployTest {
 
     @Autowired
     private BlobServiceClientFactory blobServiceClientFactory;
+
+    @Autowired
+    private SftpExportComponent sftpExportComponent;
 
     private BlobServiceClient exportBlobServiceClient;
 
@@ -46,5 +52,14 @@ public class PostDeployTest {
             .getBlobContainerClient(CCD_EXPORT_CONTAINER_NAME)
             .getBlobClient(TEST_EXPORT_BLOB)
             .exists(), "Blob was not successfully exported over to export storage.");
+
+    }
+
+    @Test
+    public void testSftpExported() {
+        sftpExportComponent.loadFile(TEST_EXPORT_BLOB, TEST_EXPORT_BLOB);
+        File expectedFile = new File(TEST_EXPORT_BLOB);
+        assertTrue(expectedFile.exists(), "File from SFTP server not found");
+        expectedFile.deleteOnExit();
     }
 }
