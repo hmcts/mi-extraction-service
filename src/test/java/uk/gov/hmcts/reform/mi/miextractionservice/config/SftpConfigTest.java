@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SftpConfigTest {
 
-    private SftpConfig classToTest = new SftpConfig();
+    private final SftpConfig classToTest = new SftpConfig();
 
     @Test
     public void testJschCreation() {
