@@ -87,7 +87,7 @@ public class CoreCaseDataExportBlobDataComponentImpl implements ExportBlobDataCo
     private DateTimeUtil dateTimeUtil;
 
     @Autowired
-    private SftpExportComponent sftpExportComponentImpl;
+    private SftpExportComponent sftpExportComponent;
 
     /**
      * Exports data matching date range provided as a CSV, compressed in an encrypted archive for ease of upload and download and security.
@@ -130,7 +130,7 @@ public class CoreCaseDataExportBlobDataComponentImpl implements ExportBlobDataCo
             }
 
             blobContainerClient.getBlobClient(outputBlobName).uploadFromFile(outputBlobName, true);
-            sftpExportComponentImpl.copyFile(outputBlobName);
+            sftpExportComponent.copyFile(outputBlobName);
 
             // Clean up files after upload
             fileWrapper.deleteFileOnExit(workingFileName);

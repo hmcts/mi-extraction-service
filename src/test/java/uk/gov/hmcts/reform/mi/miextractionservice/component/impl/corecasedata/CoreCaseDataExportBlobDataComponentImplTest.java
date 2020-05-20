@@ -23,7 +23,7 @@ import uk.gov.hmcts.reform.mi.miextractionservice.component.CoreCaseDataFormatte
 import uk.gov.hmcts.reform.mi.miextractionservice.component.FilterComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.JsonlWriterComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.MetadataFilterComponent;
-import uk.gov.hmcts.reform.mi.miextractionservice.component.impl.SftpExportComponentImpl;
+import uk.gov.hmcts.reform.mi.miextractionservice.component.SftpExportComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.domain.OutputCoreCaseData;
 import uk.gov.hmcts.reform.mi.miextractionservice.exception.ParserException;
 import uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.PagedIterableStub;
@@ -122,7 +122,7 @@ public class CoreCaseDataExportBlobDataComponentImplTest {
     private ArchiveComponent archiveComponent;
 
     @Mock
-    private SftpExportComponentImpl classToTest;
+    private SftpExportComponent classToTest;
 
     @Spy
     private ReaderUtil readerUtil;
