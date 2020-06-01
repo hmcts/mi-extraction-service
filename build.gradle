@@ -246,6 +246,7 @@ dependencies {
 
   integrationTestImplementation 'org.projectlombok:lombok'
   integrationTestAnnotationProcessor 'org.projectlombok:lombok'
+  integrationTestImplementation group: 'com.jcraft', name: 'jsch', version: versions.jcraft
 
   integrationTestImplementation group: 'uk.gov.hmcts.reform.mi', name: 'mi-core-lib', version: versions.miCoreLib
 

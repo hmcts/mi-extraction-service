@@ -75,5 +75,9 @@ stages:
           value: 'gov-uk-notify-api-key'
         - key: MAIL_TARGETS
           value: 'mailing-targets'
+        - key: SFTP_REMOTE_USER
+          value: 'sftp-remote-user'
+        - key: SFTP_REMOTE_PASSWORD
+          value: 'sftp-remote-password'
         - key: AZURE_CONTAINER_REGISTRY
           value: $(azure.container.registry)
