@@ -6,12 +6,8 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import uk.gov.hmcts.reform.mi.miextractionservice.component.SftpExportComponent;
-import uk.gov.hmcts.reform.mi.miextractionservice.exception.ExportException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -34,8 +30,8 @@ public class SftpClient {
     @Value("${sftp.remote.folder}")
     private String destinyFolder;
 
-    private Session session = null;
-    private ChannelSftp sftpChannel = null;
+    private Session session;
+    private ChannelSftp sftpChannel;
 
     @PostConstruct
     public void init() throws JSchException {
