@@ -74,6 +74,8 @@ public class SftpExportComponentImplTest {
         classToTest.copyFile(FILE_NAME);
         verify(channelSftp, times(1)).put(FILE_NAME, SFTP_DESTINY_FOLDER + FILE_NAME);
         verify(session, times(1)).disconnect();
+        verify(channelSftp, times(1)).stat(SFTP_DESTINY_FOLDER);
+
     }
 
     @Test
@@ -154,5 +156,29 @@ public class SftpExportComponentImplTest {
         assertThrows(ExportException.class, () -> classToTest.checkConnection());
         verify(channelSftp, never()).connect(anyInt());
         verify(session, never()).disconnect();
+    }
+
+
+    @Test
+    public void testCopyFileWhenFolderNotExist() throws SftpException, JSchException {
+        when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
+        when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
+        when(channelSftp.stat(SFTP_DESTINY_FOLDER)).thenThrow(new SftpException(ChannelSftp.SSH_FX_NO_SUCH_FILE, "Error"));
+
+        classToTest.copyFile(FILE_NAME);
+        verify(channelSftp, times(1)).put(FILE_NAME, SFTP_DESTINY_FOLDER + FILE_NAME);
+        verify(session, times(1)).disconnect();
+        verify(channelSftp, times(1)).mkdir(SFTP_DESTINY_FOLDER);
+    }
+
+    @Test
+    public void testErrorCreatingFolderPropagateException() throws SftpException, JSchException {
+        when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
+        when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
+        when(channelSftp.stat(SFTP_DESTINY_FOLDER)).thenThrow(new SftpException(ChannelSftp.SSH_FX_BAD_MESSAGE, "Error"));
+
+        assertThrows(ExportException.class, () -> classToTest.copyFile(FILE_NAME));
+
+        verify(session, times(1)).disconnect();
     }
 }

@@ -44,6 +44,7 @@ public class SftpExportComponentImpl implements SftpExportComponent {
                 session = getJshSession();
                 setupStpChannel(session);
                 ChannelSftp sftpChannel = setupStpChannel(session);
+                checkFolder(sftpChannel);
                 sftpChannel.put(file, destinyFolder + file);
             } catch (JSchException | SftpException e) {
                 throw new ExportException("Unable to send file to sftp server", e);
@@ -55,6 +56,19 @@ public class SftpExportComponentImpl implements SftpExportComponent {
             log.info("File {} send to sftp server", file);
         } else {
             log.info("SFTP component is disabled");
+        }
+    }
+
+    private void checkFolder(ChannelSftp sftpChannel) throws SftpException {
+        try {
+            sftpChannel.stat(destinyFolder);
+        } catch (final SftpException e) {
+            // dir does not exist.
+            if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
+                sftpChannel.mkdir(destinyFolder);
+            } else {
+                throw e;
+            }
         }
     }
 

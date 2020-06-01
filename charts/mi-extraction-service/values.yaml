@@ -11,6 +11,8 @@ mi-job:
   environment:
     STORAGE_STAGING_NAME: mipersistent{{ .Values.global.environment }}
     STORAGE_EXPORT_NAME: miexport{{ .Values.global.environment }}
+    SFTP_REMOTE_HOST: staging.hmcts.cloudgateway.co.uk
+    SFTP_REMOTE_FOLDER: /upload/mi-platform-export-{{ .Values.global.environment }}
   keyVaults:
     "mi-vault":
       resourceGroup: mi-{{ .Values.global.environment }}-rg
