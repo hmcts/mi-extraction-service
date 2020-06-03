@@ -52,6 +52,7 @@ resources:
       type: github
       name: hmcts/mi-core-lib
       endpoint: hmcts
+      ref: add-env-args
 
 stages:
   - template: pipeline-steps/templates/build-deploy-stage.yaml@mi-core
@@ -66,6 +67,9 @@ stages:
       promEnv: $(env.prom)
       azureVault: $(vault)
       azureSecreKeys: 'mi-staging-storage-connection-string,mi-export-storage-connection-string,gov-uk-notify-api-key,mailing-targets'
+      envMapping:
+          key: ENV
+          value: $(environment)
       azureKeyMapping:
         - key: STORAGE_STAGING_CONNECTION_STRING
           value: 'mi-staging-storage-connection-string'
