@@ -200,7 +200,7 @@ dependencies {
 
   implementation group: 'uk.gov.hmcts.reform', name: 'logging', version: versions.reformLogging
   implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformLogging
-  implementation('uk.gov.hmcts.reform:properties-volume-spring-boot-starter:0.0.4') {
+  implementation('uk.gov.hmcts.reform:properties-volume-spring-boot-starter:0.1.0') {
     exclude group: 'org.springframework.boot', module: 'spring-boot-starter-web'
   }
 
