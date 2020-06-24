@@ -104,7 +104,7 @@ public class ExportBlobDataComponentImpl implements ExportBlobDataComponent {
         int dataCount = readAndWriteData(sourceBlobServiceClient, fromDate, toDate, workingFileName, source);
 
         if (dataCount > 0) {
-            log.info("Found a total of {} records to write for Notify. About to upload blob.", dataCount);
+            log.info("Found a total of {} records to write for {}. About to upload blob.", dataCount, source.getValue());
 
             BlobContainerClient blobContainerClient = targetBlobServiceClient.getBlobContainerClient(sourceUtil.getContainerName(source));
 
@@ -127,7 +127,7 @@ public class ExportBlobDataComponentImpl implements ExportBlobDataComponent {
 
             blobContainerClient.getBlobClient(outputBlobName).uploadFromFile(outputBlobName, true);
 
-            log.info("Uploaded blob {} for {}}.", outputBlobName, source.getValue());
+            log.info("Uploaded in container {}, blob {} for {}.", sourceUtil.getContainerName(source), outputBlobName, source.getValue());
 
             fileWrapper.deleteFileOnExit(outputBlobName);
 
