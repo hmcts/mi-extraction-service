@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.mi.miextractionservice.component.BlobDownloadComponen
 import uk.gov.hmcts.reform.mi.miextractionservice.component.CheckWhitelistComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.ExportBlobDataComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.MetadataFilterComponent;
+import uk.gov.hmcts.reform.mi.miextractionservice.component.WriteDataComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.domain.SourceEnum;
 import uk.gov.hmcts.reform.mi.miextractionservice.exception.ParserException;
 import uk.gov.hmcts.reform.mi.miextractionservice.factory.WriteDataFactory;
@@ -207,11 +208,10 @@ public class ExportBlobDataComponentImpl implements ExportBlobDataComponent {
             while (line != null) {
                 if (StringUtils.isNotBlank(line)) {
                     outputLines.add(line);
-                    dataCount = dataCount + 1;
 
                     // Reached max buffer, so write to file chunk and clear
                     if (outputLines.size() >= Integer.parseInt(maxLines)) {
-                        writeData(bufferedWriter, outputLines, fromDate, toDate, source);
+                        dataCount = dataCount + writeData(bufferedWriter, outputLines, fromDate, toDate, source);
                         outputLines.clear();
                     }
                 }
@@ -220,7 +220,7 @@ public class ExportBlobDataComponentImpl implements ExportBlobDataComponent {
             }
 
             if (Boolean.FALSE.equals(outputLines.isEmpty())) {
-                writeData(bufferedWriter, outputLines, fromDate, toDate, source);
+                dataCount = dataCount + writeData(bufferedWriter, outputLines, fromDate, toDate, source);
             }
         } catch (IOException exception) {
             log.error("Exception occurred writing data from blob to file.");
@@ -230,7 +230,8 @@ public class ExportBlobDataComponentImpl implements ExportBlobDataComponent {
         return dataCount;
     }
 
-    private void writeData(BufferedWriter writer, List<String> data, OffsetDateTime fromDate, OffsetDateTime toDate, SourceEnum source) {
-        writeDataFactory.getWriteComponent(source).writeData(writer, data, fromDate, toDate);
+    private int writeData(BufferedWriter writer, List<String> data, OffsetDateTime fromDate, OffsetDateTime toDate, SourceEnum source) {
+        WriteDataComponent writeDataComponent = writeDataFactory.getWriteComponent(source);
+        return writeDataComponent.writeData(writer, data, fromDate, toDate);
     }
 }

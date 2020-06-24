@@ -30,12 +30,14 @@ public class CoreCaseDataWriteDataComponentImpl implements WriteDataComponent {
     private JsonlWriterComponent<OutputCoreCaseData> jsonlWriterComponent;
 
     @Override
-    public void writeData(BufferedWriter writer, List<String> data, OffsetDateTime fromDate, OffsetDateTime toDate) {
+    public int writeData(BufferedWriter writer, List<String> data, OffsetDateTime fromDate, OffsetDateTime toDate) {
         List<CoreCaseData> filteredData = filterComponent.filterDataInDateRange(data, fromDate, toDate);
         List<OutputCoreCaseData> formattedData = filteredData.stream()
             .map(coreCaseDataFormatterComponent::formatData)
             .collect(Collectors.toList());
 
         jsonlWriterComponent.writeLinesAsJsonl(writer, formattedData);
+
+        return filteredData.size();
     }
 }
