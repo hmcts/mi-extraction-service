@@ -24,9 +24,11 @@ public class NotifyWriteDataComponentImpl implements WriteDataComponent {
     private JsonlWriterComponent<NotificationOutput> jsonlWriterComponent;
 
     @Override
-    public void writeData(BufferedWriter writer, List<String> data, OffsetDateTime fromDate, OffsetDateTime toDate) {
+    public int writeData(BufferedWriter writer, List<String> data, OffsetDateTime fromDate, OffsetDateTime toDate) {
         List<NotificationOutput> filteredData = filterComponent.filterDataInDateRange(data, fromDate, toDate);
 
         jsonlWriterComponent.writeLinesAsJsonl(writer, filteredData);
+
+        return filteredData.size();
     }
 }
