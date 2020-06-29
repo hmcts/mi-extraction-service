@@ -37,7 +37,7 @@ class CoreCaseDataParserComponentImplTest {
     void givenCoreCaseDataJsonString_whenParseData_thenReturnCoreCaseDataObject() {
         CoreCaseData expected = CoreCaseData.builder()
             .extractionDate(TEST_EXTRACTION_DATE)
-            .caseMetadataEventId(Long.parseLong(TEST_CASE_METADATA_EVENT_ID))
+            .ceId(Long.parseLong(TEST_CASE_METADATA_EVENT_ID))
             .ceCaseDataId(Long.parseLong(TEST_CASE_DATA_ID))
             .ceCaseTypeId(TEST_CASE_TYPE_ID)
             .ceCaseTypeVersion(Long.parseLong(TEST_CASE_TYPE_VERSION))

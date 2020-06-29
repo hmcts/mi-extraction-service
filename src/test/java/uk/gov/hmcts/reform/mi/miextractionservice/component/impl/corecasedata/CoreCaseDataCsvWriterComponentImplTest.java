@@ -19,6 +19,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -44,6 +44,17 @@ import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConsta
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CASE_STATE_NAME;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CASE_TYPE_ID;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CASE_TYPE_VERSION;
+import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_CASE_DATA_ID;
+import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_CREATED_DATE;
+import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_JURISDICTION;
+import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_LAST_MODIFIED;
+import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_LAST_STATE_MODIFIED_DATE;
+import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_LATEST_STATE;
+import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_REFERENCE;
+import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_SECURITY_CLASSIFICATION;
+import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_VERSION;
+import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CE_DATA_CLASSIFICATION;
+import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CE_SECURITY_CLASSIFICATION;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CREATED_DATE_FORMATTED;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_DATA_JSON_STRING;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_DESCRIPTION;
@@ -60,30 +71,44 @@ import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConsta
 class CoreCaseDataCsvWriterComponentImplTest {
 
     private static final String TEST_FILE_NAME = "unit-test";
-    private static final String EXPECTED_HEADER_ROW = "\"extraction_date\",\"case_metadata_event_id\",\"ce_case_data_id\","
+    private static final String EXPECTED_HEADER_ROW = "\"extraction_date\",\"ce_id\",\"ce_case_data_id\","
         + "\"ce_created_date\",\"ce_case_type_id\",\"ce_case_type_version\",\"ce_state_id\",\"ce_state_name\",\"ce_summary\","
         + "\"ce_description\",\"ce_event_id\",\"ce_event_name\",\"ce_user_id\","
-        + "\"ce_user_first_name\",\"ce_user_last_name\",\"data\"";
+        + "\"ce_user_first_name\",\"ce_user_last_name\",\"ce_data\",\"cd_case_data_id\",\"cd_created_date\",\"cd_last_modified\","
+        + "\"cd_jurisdiction\",\"cd_latest_state\",\"cd_reference\",\"cd_security_classification\",\"cd_version\",\"cd_last_state_modified_date\","
+        + "\"ce_data_classification\",\"ce_security_classification\"";
 
     private static final OutputCoreCaseData TEST_OUTPUT_DATA = OutputCoreCaseData
         .builder()
         .extraction_date(TEST_EXTRACTION_DATE)
-        .case_metadata_event_id(TEST_CASE_METADATA_EVENT_ID)
+        .ce_id(TEST_CASE_METADATA_EVENT_ID)
         .ce_case_data_id(TEST_CASE_DATA_ID)
         .ce_created_date(TEST_CREATED_DATE_FORMATTED)
         .ce_case_type_id(TEST_CASE_TYPE_ID)
         .ce_case_type_version(TEST_CASE_TYPE_VERSION)
         .ce_state_id(TEST_CASE_STATE_ID)
         .ce_state_name(TEST_CASE_STATE_NAME)
-        .ce_event_name(TEST_EVENT_NAME)
         .ce_summary(TEST_SUMMARY)
+        .ce_description(TEST_DESCRIPTION)
         .ce_event_id(TEST_EVENT_ID)
+        .ce_event_name(TEST_EVENT_NAME)
         .ce_user_id(TEST_USER_ID)
         .ce_user_first_name(TEST_USER_FIRST_NAME)
         .ce_user_last_name(TEST_USER_LAST_NAME)
-        .ce_description(TEST_DESCRIPTION)
-        .data(TEST_DATA_JSON_STRING)
+        .ce_data(TEST_DATA_JSON_STRING)
+        .cd_case_data_id(TEST_CD_CASE_DATA_ID)
+        .cd_created_date(TEST_CD_CREATED_DATE)
+        .cd_last_modified(TEST_CD_LAST_MODIFIED)
+        .cd_jurisdiction(TEST_CD_JURISDICTION)
+        .cd_latest_state(TEST_CD_LATEST_STATE)
+        .cd_reference(TEST_CD_REFERENCE)
+        .cd_security_classification(TEST_CD_SECURITY_CLASSIFICATION)
+        .cd_version(TEST_CD_VERSION)
+        .cd_last_state_modified_date(TEST_CD_LAST_STATE_MODIFIED_DATE)
+        .ce_data_classification(TEST_CE_DATA_CLASSIFICATION)
+        .ce_security_classification(TEST_CE_SECURITY_CLASSIFICATION)
         .build();
+
     private static final List<OutputCoreCaseData> TEST_OUTPUT_LIST = Collections.singletonList(TEST_OUTPUT_DATA);
 
     private String uniqueFileName;
@@ -102,7 +127,7 @@ class CoreCaseDataCsvWriterComponentImplTest {
     void setUp() throws IOException {
         uniqueFileName = TEST_FILE_NAME + "-" + UUID.randomUUID().toString();
 
-        writer = mock(Writer.class);
+        writer = spy(new StringWriter());
         csvWriter = spy(new CSVWriterKeepAlive(writer));
         bufferedWriter = spy(new BufferedWriter(writer));
 
@@ -128,12 +153,12 @@ class CoreCaseDataCsvWriterComponentImplTest {
         verify(writer).write(contains(EXPECTED_HEADER_ROW + "\n"));
         verify(writer, times(1)).flush();
         verify(csvWriter, times(1)).close();
+
     }
 
     @Test
     void givenValidWriter_whenWriteBeans_thenCsvFileIsCreated() throws Exception {
         underTest.writeBeansWithWriter(writer, TEST_OUTPUT_LIST);
-
         verify(writer).write(getExpectedDataString() + "\n");
         verify(writer, times(1)).flush();
         verify(csvWriter, times(1)).close();
@@ -236,7 +261,8 @@ class CoreCaseDataCsvWriterComponentImplTest {
 
     private String getExpectedDataString() {
         // Everything will be wrapped in quotes to prevent data json string commas from affecting actual data
-        return String.join(",",
+        return String.join(
+            ",",
             wrapStringInQuotes(TEST_EXTRACTION_DATE),
             wrapStringInQuotes(TEST_CASE_METADATA_EVENT_ID),
             wrapStringInQuotes(TEST_CASE_DATA_ID),
@@ -252,7 +278,18 @@ class CoreCaseDataCsvWriterComponentImplTest {
             wrapStringInQuotes(TEST_USER_ID),
             wrapStringInQuotes(TEST_USER_FIRST_NAME),
             wrapStringInQuotes(TEST_USER_LAST_NAME),
-            wrapStringInQuotes("{\"\"hello\"\":\"\"world\"\"}")
-        );
+            wrapStringInQuotes("{\"\"hello\"\":\"\"world\"\"}"),
+            wrapStringInQuotes(TEST_CD_CASE_DATA_ID),
+            wrapStringInQuotes(TEST_CD_CREATED_DATE),
+            wrapStringInQuotes(TEST_CD_LAST_MODIFIED),
+            wrapStringInQuotes(TEST_CD_JURISDICTION),
+            wrapStringInQuotes(TEST_CD_LATEST_STATE),
+            wrapStringInQuotes(TEST_CD_REFERENCE),
+            wrapStringInQuotes(TEST_CD_SECURITY_CLASSIFICATION),
+            wrapStringInQuotes(TEST_CD_VERSION),
+            wrapStringInQuotes(TEST_CD_LAST_STATE_MODIFIED_DATE),
+            wrapStringInQuotes("{\"\"hello\"\":\"\"public\"\"}"),
+            wrapStringInQuotes(TEST_CE_SECURITY_CLASSIFICATION)
+            );
     }
 }

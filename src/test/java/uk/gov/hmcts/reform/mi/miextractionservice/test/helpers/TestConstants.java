@@ -10,7 +10,7 @@ public final class TestConstants {
 
     public static String CORE_CASE_DATA_JSON_STRING = "{"
         + "\"extraction_date\":\"%s\","
-        + "\"case_metadata_event_id\":%s,"
+        + "\"ce_id\":%s,"
         + "\"ce_case_data_id\":%s,"
         + "\"ce_created_date\":%s,"
         + "\"ce_case_type_id\":\"%s\","
@@ -37,6 +37,21 @@ public final class TestConstants {
     public static final String TEST_USER_LAST_NAME = "ce_user_last_name";
     public static final String TEST_DATA_JSON_STRING = "{\"hello\":\"world\"}";
 
+    public static final String TEST_CD_CASE_DATA_ID = "TEST_CD_CASE_DATA_ID";
+    public static final String TEST_CD_CREATED_DATE = "TEST_CD_CREATED_DATE";
+    public static final String TEST_CD_LAST_MODIFIED = "TEST_CD_LAST_MODIFIED";
+    public static final String TEST_CD_JURISDICTION = "jurisdiction";
+    public static final String TEST_CD_LATEST_STATE = "lastState";
+    public static final String TEST_CD_REFERENCE = "1";
+    public static final String TEST_CD_SECURITY_CLASSIFICATION = "public";
+    public static final String TEST_CD_VERSION = "1";
+    public static final String TEST_CD_LAST_STATE_MODIFIED_DATE = "2";
+    public static final String TEST_CE_DATA_CLASSIFICATION = "{\"hello\":\"public\"}";
+
+    public static final String TEST_CE_SECURITY_CLASSIFICATION = "public";
+
+
+
     public static final String CCD_EXTRACTION_DATE = "19991201-1010";
     public static final long CCD_DATA_ID = 100_001L;
     public static final String CCD_STATE_ID = "StateId";
@@ -51,7 +66,7 @@ public final class TestConstants {
         TEST_CASE_STATE_ID,
         TEST_DATA_JSON_STRING);
 
-    public static final String TEMPLATE = "{ \"extraction_date\": \"19991201-1010\", \"case_metadata_event_id\": 1000001,"
+    public static final String TEMPLATE = "{ \"extraction_date\": \"19991201-1010\", \"ce_id\": 1000001,"
         + " \"ce_case_data_id\": 100001, \"ce_created_date\": %s, \"ce_case_type_id\": \"%s\", \"ce_case_type_version\": 1001,"
         + " \"ce_state_id\": \"StatÈId\", \"ce_data\": {} }";
 
@@ -62,7 +77,7 @@ public final class TestConstants {
 
     public static final CoreCaseData TEST_CCD_JSONL_AS_CORE_CASE_DATA = CoreCaseData.builder()
         .extractionDate(CCD_EXTRACTION_DATE)
-        .caseMetadataEventId(1_000_001L)
+        .ceId(1_000_001L)
         .ceCaseDataId(CCD_DATA_ID)
         .ceCreatedDate(949_104_000_000L)
         .ceCaseTypeId(TEST_CASE_TYPE_ID)
@@ -73,7 +88,7 @@ public final class TestConstants {
 
     public static final CoreCaseData TEST_CCD_JSONL_OUTDATED_FUTURE_AS_CORE_CASE_DATA = CoreCaseData.builder()
         .extractionDate(CCD_EXTRACTION_DATE)
-        .caseMetadataEventId(1_000_001L)
+        .ceId(1_000_001L)
         .ceCaseDataId(CCD_DATA_ID)
         .ceCreatedDate(990_150_800_000L)
         .ceCaseTypeId(TEST_CASE_TYPE_ID)
@@ -84,7 +99,7 @@ public final class TestConstants {
 
     public static final CoreCaseData TEST_CCD_JSONL_OUTDATED_PAST_AS_CORE_CASE_DATA = CoreCaseData.builder()
         .extractionDate(CCD_EXTRACTION_DATE)
-        .caseMetadataEventId(1_000_001L)
+        .ceId(1_000_001L)
         .ceCaseDataId(CCD_DATA_ID)
         .ceCreatedDate(900_140_800_000L)
         .ceCaseTypeId(TEST_CASE_TYPE_ID)
@@ -95,7 +110,7 @@ public final class TestConstants {
 
     public static final CoreCaseData TEST_CCD_JSONL_NEW_CASETYPE_AS_CORE_CASE_DATA = CoreCaseData.builder()
         .extractionDate(CCD_EXTRACTION_DATE)
-        .caseMetadataEventId(1_000_001L)
+        .ceId(1_000_001L)
         .ceCaseDataId(CCD_DATA_ID)
         .ceCreatedDate(949_104_000_000L)
         .ceCaseTypeId("NEWCASETYPE")
@@ -106,13 +121,13 @@ public final class TestConstants {
 
     public static final OutputCoreCaseData TEST_CCD_JSONL_AS_OUTPUT_CORE_CASE_DATA = OutputCoreCaseData.builder()
         .extraction_date(CCD_EXTRACTION_DATE)
-        .case_metadata_event_id("1000001")
+        .ce_id("1000001")
         .ce_case_data_id("100001")
         .ce_created_date("2000-01-29 00:00:00.000")
         .ce_case_type_id(TEST_CASE_TYPE_ID)
         .ce_case_type_version("1001")
         .ce_state_id(CCD_STATE_ID)
-        .data("{}")
+        .ce_data("{}")
         .build();
 
     private TestConstants() {

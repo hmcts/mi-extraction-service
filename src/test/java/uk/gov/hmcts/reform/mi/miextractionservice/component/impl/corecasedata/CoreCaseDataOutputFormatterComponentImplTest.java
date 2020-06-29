@@ -53,17 +53,16 @@ class CoreCaseDataOutputFormatterComponentImplTest {
         OutputCoreCaseData expected = OutputCoreCaseData
             .builder()
             .extraction_date(TEST_EXTRACTION_DATE)
-            .case_metadata_event_id(TEST_CASE_METADATA_EVENT_ID)
+            .ce_id(TEST_CASE_METADATA_EVENT_ID)
             .ce_case_data_id(TEST_CASE_DATA_ID)
             .ce_created_date(TEST_CREATED_DATE_FORMATTED)
             .ce_case_type_id(TEST_CASE_TYPE_ID)
             .ce_case_type_version(TEST_CASE_TYPE_VERSION)
             .ce_state_id(TEST_CASE_STATE_ID)
-            .data(TEST_DATA_JSON_STRING)
+            .ce_data(TEST_DATA_JSON_STRING)
             .build();
 
         when(objectMapper.writeValueAsString(any())).thenCallRealMethod();
-
         assertEquals(expected, underTest.formatData(coreCaseData), "Properties of output does not match expected values.");
     }
 

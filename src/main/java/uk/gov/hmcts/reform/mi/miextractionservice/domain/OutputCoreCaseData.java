@@ -13,7 +13,7 @@ public class OutputCoreCaseData {
     private String extraction_date;
 
     @CsvBindByPosition(position = 1)
-    private String case_metadata_event_id;
+    private String ce_id;
 
     @CsvBindByPosition(position = 2)
     private String ce_case_data_id;
@@ -31,29 +31,62 @@ public class OutputCoreCaseData {
     private String ce_state_id;
 
     @CsvBindByPosition(position = 7)
-    String ce_state_name;
+    private String ce_state_name;
 
     @CsvBindByPosition(position = 8)
-    String ce_summary;
+    private String ce_summary;
 
     @CsvBindByPosition(position = 9)
-    String ce_description;
+    private String ce_description;
 
     @CsvBindByPosition(position = 10)
-    String ce_event_id;
+    private String ce_event_id;
 
     @CsvBindByPosition(position = 11)
-    String ce_event_name;
+    private String ce_event_name;
 
     @CsvBindByPosition(position = 12)
-    String ce_user_id;
+    private String ce_user_id;
 
     @CsvBindByPosition(position = 13)
-    String ce_user_first_name;
+    private String ce_user_first_name;
 
     @CsvBindByPosition(position = 14)
-    String ce_user_last_name;
+    private String ce_user_last_name;
 
     @CsvBindByPosition(position = 15)
-    private String data;
+    private String ce_data;
+
+    @CsvBindByPosition(position = 16)
+    private String cd_case_data_id;
+
+    @CsvBindByPosition(position = 17)
+    private String cd_created_date;
+
+    @CsvBindByPosition(position = 18)
+    private String cd_last_modified;
+
+    @CsvBindByPosition(position = 19)
+    private String cd_jurisdiction;
+
+    @CsvBindByPosition(position = 20)
+    private String cd_latest_state;
+
+    @CsvBindByPosition(position = 21)
+    private String cd_reference;
+
+    @CsvBindByPosition(position = 22)
+    private String cd_security_classification;
+
+    @CsvBindByPosition(position = 23)
+    private String cd_version;
+
+    @CsvBindByPosition(position = 24)
+    private String cd_last_state_modified_date;
+
+    @CsvBindByPosition(position = 25)
+    private String ce_data_classification;
+
+    @CsvBindByPosition(position = 26)
+    private String ce_security_classification;
 }
