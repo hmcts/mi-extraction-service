@@ -58,35 +58,32 @@ public class OutputCoreCaseData {
     private String ce_data;
 
     @CsvBindByPosition(position = 16)
-    private String cd_case_data_id;
-
-    @CsvBindByPosition(position = 17)
     private String cd_created_date;
 
-    @CsvBindByPosition(position = 18)
+    @CsvBindByPosition(position = 17)
     private String cd_last_modified;
 
-    @CsvBindByPosition(position = 19)
+    @CsvBindByPosition(position = 18)
     private String cd_jurisdiction;
 
-    @CsvBindByPosition(position = 20)
+    @CsvBindByPosition(position = 19)
     private String cd_latest_state;
 
-    @CsvBindByPosition(position = 21)
+    @CsvBindByPosition(position = 20)
     private String cd_reference;
 
-    @CsvBindByPosition(position = 22)
+    @CsvBindByPosition(position = 21)
     private String cd_security_classification;
 
-    @CsvBindByPosition(position = 23)
+    @CsvBindByPosition(position = 22)
     private String cd_version;
 
-    @CsvBindByPosition(position = 24)
+    @CsvBindByPosition(position = 23)
     private String cd_last_state_modified_date;
 
-    @CsvBindByPosition(position = 25)
+    @CsvBindByPosition(position = 24)
     private String ce_data_classification;
 
-    @CsvBindByPosition(position = 26)
+    @CsvBindByPosition(position = 25)
     private String ce_security_classification;
 }

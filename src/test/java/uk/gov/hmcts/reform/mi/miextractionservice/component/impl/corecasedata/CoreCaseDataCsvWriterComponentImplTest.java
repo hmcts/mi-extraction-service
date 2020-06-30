@@ -44,7 +44,6 @@ import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConsta
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CASE_STATE_NAME;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CASE_TYPE_ID;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CASE_TYPE_VERSION;
-import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_CASE_DATA_ID;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_CREATED_DATE;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_JURISDICTION;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.helpers.TestConstants.TEST_CD_LAST_MODIFIED;
@@ -74,7 +73,7 @@ class CoreCaseDataCsvWriterComponentImplTest {
     private static final String EXPECTED_HEADER_ROW = "\"extraction_date\",\"ce_id\",\"ce_case_data_id\","
         + "\"ce_created_date\",\"ce_case_type_id\",\"ce_case_type_version\",\"ce_state_id\",\"ce_state_name\",\"ce_summary\","
         + "\"ce_description\",\"ce_event_id\",\"ce_event_name\",\"ce_user_id\","
-        + "\"ce_user_first_name\",\"ce_user_last_name\",\"ce_data\",\"cd_case_data_id\",\"cd_created_date\",\"cd_last_modified\","
+        + "\"ce_user_first_name\",\"ce_user_last_name\",\"ce_data\",\"cd_created_date\",\"cd_last_modified\","
         + "\"cd_jurisdiction\",\"cd_latest_state\",\"cd_reference\",\"cd_security_classification\",\"cd_version\",\"cd_last_state_modified_date\","
         + "\"ce_data_classification\",\"ce_security_classification\"";
 
@@ -96,7 +95,6 @@ class CoreCaseDataCsvWriterComponentImplTest {
         .ce_user_first_name(TEST_USER_FIRST_NAME)
         .ce_user_last_name(TEST_USER_LAST_NAME)
         .ce_data(TEST_DATA_JSON_STRING)
-        .cd_case_data_id(TEST_CD_CASE_DATA_ID)
         .cd_created_date(TEST_CD_CREATED_DATE)
         .cd_last_modified(TEST_CD_LAST_MODIFIED)
         .cd_jurisdiction(TEST_CD_JURISDICTION)
@@ -279,7 +277,6 @@ class CoreCaseDataCsvWriterComponentImplTest {
             wrapStringInQuotes(TEST_USER_FIRST_NAME),
             wrapStringInQuotes(TEST_USER_LAST_NAME),
             wrapStringInQuotes("{\"\"hello\"\":\"\"world\"\"}"),
-            wrapStringInQuotes(TEST_CD_CASE_DATA_ID),
             wrapStringInQuotes(TEST_CD_CREATED_DATE),
             wrapStringInQuotes(TEST_CD_LAST_MODIFIED),
             wrapStringInQuotes(TEST_CD_JURISDICTION),
