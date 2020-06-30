@@ -63,7 +63,7 @@ public class CoreCaseDataOutputFormatterComponentImpl implements CoreCaseDataFor
 
     private String getStringFromLong(Long input) {
         return Optional.ofNullable(input)
-            .map(value -> value.toString())
+            .map(String::valueOf)
             .orElse(null);
     }
 
