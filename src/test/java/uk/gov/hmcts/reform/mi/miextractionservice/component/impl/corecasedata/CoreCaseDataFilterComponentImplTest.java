@@ -55,7 +55,7 @@ class CoreCaseDataFilterComponentImplTest {
             TEST_CCD_JSONL, TEST_CCD_JSONL_OUTDATED_FUTURE, TEST_CCD_JSONL_OUTDATED_PAST
         );
 
-        List<CoreCaseData> expected = Collections.singletonList(TEST_CCD_JSONL_AS_CORE_CASE_DATA);
+        List<String> expected = Collections.singletonList(TEST_CCD_JSONL);
         assertEquals(expected, underTest.filterDataInDateRange(inputData, TEST_FROM_DATE_TIME, TEST_TO_DATE_TIME),
             "Date filter did not work as expected.");
     }
@@ -73,8 +73,8 @@ class CoreCaseDataFilterComponentImplTest {
             TEST_CCD_JSONL, TEST_CCD_JSONL_OUTDATED_FUTURE, TEST_CCD_JSONL_OUTDATED_PAST
         );
 
-        List<CoreCaseData> expected = ImmutableList.of(
-            TEST_CCD_JSONL_AS_CORE_CASE_DATA, TEST_CCD_JSONL_OUTDATED_FUTURE_AS_CORE_CASE_DATA, TEST_CCD_JSONL_OUTDATED_PAST_AS_CORE_CASE_DATA
+        List<String> expected = ImmutableList.of(
+            TEST_CCD_JSONL, TEST_CCD_JSONL_OUTDATED_FUTURE, TEST_CCD_JSONL_OUTDATED_PAST
         );
 
         OffsetDateTime testFromDate = OffsetDateTime.of(1998, 7, 11, 0, 0, 0, 0, ZoneOffset.UTC);
@@ -96,7 +96,7 @@ class CoreCaseDataFilterComponentImplTest {
             TEST_CCD_JSONL, TEST_CCD_JSONL_NEW_CASETYPE
         );
 
-        List<CoreCaseData> expected = Collections.singletonList(TEST_CCD_JSONL_NEW_CASETYPE_AS_CORE_CASE_DATA);
+        List<String> expected = Collections.singletonList(TEST_CCD_JSONL_NEW_CASETYPE);
         assertEquals(expected, underTest.filterDataInDateRange(inputData, TEST_FROM_DATE_TIME, TEST_TO_DATE_TIME),
             "Case type filter did not work as expected.");
     }
