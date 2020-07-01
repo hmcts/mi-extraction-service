@@ -152,7 +152,7 @@ public class ExportBlobDataComponentImpl implements ExportBlobDataComponent {
             for (BlobContainerItem blobContainerItem : sourceBlobServiceClient.listBlobContainers()) {
 
                 if (checkWhitelistComponent.isContainerWhitelisted(blobContainerItem.getName())
-                    && blobContainerItem.getName().startsWith(sourceUtil.getContainerName(source))) {
+                    && blobContainerItem.getName().startsWith(sourceUtil.getContainerName(source).concat("-"))) {
 
                     BlobContainerClient blobContainerClient = sourceBlobServiceClient.getBlobContainerClient(blobContainerItem.getName());
 
