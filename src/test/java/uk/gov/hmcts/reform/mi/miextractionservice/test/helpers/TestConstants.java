@@ -22,34 +22,10 @@ public final class TestConstants {
     public static final String TEST_CASE_METADATA_EVENT_ID = "1";
     public static final String TEST_CASE_DATA_ID = "1";
     public static final String TEST_CREATED_DATE = "0";
-    public static final String TEST_CREATED_DATE_FORMATTED = "1970-01-01 00:00:00.000";
     public static final String TEST_CASE_TYPE_ID = "CASETYPE";
     public static final String TEST_CASE_TYPE_VERSION = "1";
     public static final String TEST_CASE_STATE_ID = "CASESTATE";
-    public static final String TEST_CASE_STATE_NAME = "ce_state_name";
-    public static final String TEST_SUMMARY = "ce_summary";
-    public static final String TEST_DESCRIPTION = "ce_description";
-    public static final String TEST_EVENT_ID = "ce_event_id";
-    public static final String TEST_EVENT_NAME = "ce_event_name";
-    public static final String TEST_USER_ID = "ce_user_id";
-    public static final String TEST_USER_FIRST_NAME  = "ce_user_first_name";
-    public static final String TEST_USER_LAST_NAME = "ce_user_last_name";
     public static final String TEST_DATA_JSON_STRING = "{\"hello\":\"world\"}";
-
-    public static final String TEST_CD_CASE_DATA_ID = "TEST_CD_CASE_DATA_ID";
-    public static final String TEST_CD_CREATED_DATE = "TEST_CD_CREATED_DATE";
-    public static final String TEST_CD_LAST_MODIFIED = "TEST_CD_LAST_MODIFIED";
-    public static final String TEST_CD_JURISDICTION = "jurisdiction";
-    public static final String TEST_CD_LATEST_STATE = "lastState";
-    public static final String TEST_CD_REFERENCE = "1";
-    public static final String TEST_CD_SECURITY_CLASSIFICATION = "public";
-    public static final String TEST_CD_VERSION = "1";
-    public static final String TEST_CD_LAST_STATE_MODIFIED_DATE = "2";
-    public static final String TEST_CE_DATA_CLASSIFICATION = "{\"hello\":\"public\"}";
-
-    public static final String TEST_CE_SECURITY_CLASSIFICATION = "public";
-
-
 
     public static final String CCD_EXTRACTION_DATE = "19991201-1010";
     public static final long CCD_DATA_ID = 100_001L;
