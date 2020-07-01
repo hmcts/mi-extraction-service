@@ -8,7 +8,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import uk.gov.hmcts.reform.mi.micore.model.NotificationOutput;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.FilterComponent;
-import uk.gov.hmcts.reform.mi.miextractionservice.component.JsonlWriterComponent;
+import uk.gov.hmcts.reform.mi.miextractionservice.component.LineWriterComponent;
 
 import java.io.BufferedWriter;
 import java.time.OffsetDateTime;
@@ -35,13 +35,11 @@ class NotifyWriteDataComponentImplTest {
     private static final String NOTIFY_JSON = "{\"created_at\":\"2000-01-01T10:00:00.000000Z\"}";
     private static final String NOTIFY_JSON_FUTURE = "{\"created_at\":\"2002-01-01T10:00:00.000000Z\"}";
 
-    private static final NotificationOutput NOTIFY_OUTPUT = NotificationOutput.builder().createdAt("2000-01-01T10:00:00.000000Z").build();
-
     @Mock
     private FilterComponent<NotificationOutput> filterComponent;
 
     @Mock
-    private JsonlWriterComponent<NotificationOutput> jsonlWriterComponent;
+    private LineWriterComponent lineWriterComponent;
 
     @InjectMocks
     private NotifyWriteDataComponentImpl underTest;
@@ -51,13 +49,13 @@ class NotifyWriteDataComponentImplTest {
         when(filterComponent
             .filterDataInDateRange(argThat(allOf(hasItem(NOTIFY_JSON), hasItem(NOTIFY_JSON_FUTURE))),
                 eq(TEST_FROM_DATE_TIME), eq(TEST_TO_DATE_TIME)))
-            .thenReturn(Collections.singletonList(NOTIFY_OUTPUT));
+            .thenReturn(Collections.singletonList(NOTIFY_JSON));
 
         List<String> dataInput = List.of(NOTIFY_JSON, NOTIFY_JSON_FUTURE);
 
         underTest.writeData(mock(BufferedWriter.class), dataInput, TEST_FROM_DATE_TIME, TEST_TO_DATE_TIME);
 
-        verify(jsonlWriterComponent, times(1))
-            .writeLinesAsJsonl(any(BufferedWriter.class), eq(Collections.singletonList(NOTIFY_OUTPUT)));
+        verify(lineWriterComponent, times(1))
+            .writeLines(any(BufferedWriter.class), eq(Collections.singletonList(NOTIFY_JSON)));
     }
 }

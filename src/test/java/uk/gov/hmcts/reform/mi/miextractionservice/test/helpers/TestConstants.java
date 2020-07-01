@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.mi.miextractionservice.test.helpers;
 
 import uk.gov.hmcts.reform.mi.micore.model.CoreCaseData;
-import uk.gov.hmcts.reform.mi.miextractionservice.domain.OutputCoreCaseData;
 
 import java.util.Collections;
 
@@ -102,17 +101,6 @@ public final class TestConstants {
         .ceCaseTypeVersion(1001L)
         .ceStateId(CCD_STATE_ID)
         .ceData(Collections.emptyMap())
-        .build();
-
-    public static final OutputCoreCaseData TEST_CCD_JSONL_AS_OUTPUT_CORE_CASE_DATA = OutputCoreCaseData.builder()
-        .extraction_date(CCD_EXTRACTION_DATE)
-        .case_metadata_event_id("1000001")
-        .ce_case_data_id("100001")
-        .ce_created_date("2000-01-29 00:00:00.000")
-        .ce_case_type_id(TEST_CASE_TYPE_ID)
-        .ce_case_type_version("1001")
-        .ce_state_id(CCD_STATE_ID)
-        .data("{}")
         .build();
 
     private TestConstants() {
