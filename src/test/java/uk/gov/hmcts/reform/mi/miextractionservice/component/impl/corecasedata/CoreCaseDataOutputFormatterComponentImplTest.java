@@ -42,8 +42,6 @@ class CoreCaseDataOutputFormatterComponentImplTest {
     @InjectMocks
     private CoreCaseDataOutputFormatterComponentImpl underTest;
 
-    // PMD not picking up message in assertion for some reason.
-    @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
     @Test
     void givenCoreCaseData_whenFormatData_thenReturnOutputCoreCaseData() throws Exception {
         String dataString = DEFAULT_TEST_CORE_CASE_DATA_JSON_STRING;
@@ -76,5 +74,24 @@ class CoreCaseDataOutputFormatterComponentImplTest {
         ReflectionTestUtils.setField(underTest, "objectMapper", mockObjectMapper);
 
         assertThrows(ParserException.class, () -> underTest.formatData(coreCaseData), "Expected exception was not thrown.");
+    }
+
+    @Test
+    void givenCoreCaseDataWithMetadataId_whenFormatData_thenReturnOutputCoreCaseData() throws Exception {
+        CoreCaseData coreCaseData = CoreCaseData.builder()
+            .caseMetadataEventId(1L)
+            .extractionDate(TEST_EXTRACTION_DATE)
+            .build();
+
+
+        OutputCoreCaseData expected = OutputCoreCaseData
+            .builder()
+            .extraction_date(TEST_EXTRACTION_DATE)
+            .ce_id(TEST_CASE_METADATA_EVENT_ID)
+            .build();
+
+        when(objectMapper.writeValueAsString(any())).thenCallRealMethod();
+        assertEquals(expected, underTest.formatData(coreCaseData),
+                     "Properties of output does not match expected values.");
     }
 }
