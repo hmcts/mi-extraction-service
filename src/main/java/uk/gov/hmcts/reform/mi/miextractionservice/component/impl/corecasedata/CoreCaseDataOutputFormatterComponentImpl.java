@@ -29,7 +29,7 @@ public class CoreCaseDataOutputFormatterComponentImpl implements CoreCaseDataFor
             return OutputCoreCaseData
                 .builder()
                 .extraction_date(coreCaseData.getExtractionDate())
-                .ce_id(getStringFromLong(coreCaseData.getCeId()))
+                .ce_id(getEventMetadataId(coreCaseData))
                 .ce_case_data_id(getStringFromLong(coreCaseData.getCeCaseDataId()))
                 .ce_created_date(getStringFromDate(coreCaseData.getCeCreatedDate()))
                 .ce_case_type_id(coreCaseData.getCeCaseTypeId())
@@ -44,7 +44,6 @@ public class CoreCaseDataOutputFormatterComponentImpl implements CoreCaseDataFor
                 .ce_user_first_name(coreCaseData.getCeUserFirstName())
                 .ce_user_last_name(coreCaseData.getCeUserLastName())
                 .ce_data(getStringFromObject(coreCaseData.getCeData()))
-                .cd_case_data_id(getStringFromLong(coreCaseData.getCdCaseDataId()))
                 .cd_created_date(getStringFromLong(coreCaseData.getCdCreatedDate()))
                 .cd_last_modified(getStringFromLong(coreCaseData.getCdLastModified()))
                 .cd_jurisdiction(coreCaseData.getCdJurisdiction())
@@ -59,6 +58,11 @@ public class CoreCaseDataOutputFormatterComponentImpl implements CoreCaseDataFor
         } catch (JsonProcessingException e) {
             throw new ParserException("Unable to format given CoreCaseData to output format", e);
         }
+    }
+
+    private String getEventMetadataId(CoreCaseData coreCaseData) {
+        return coreCaseData.getCeId() == null ? getStringFromLong(coreCaseData.getCaseMetadataEventId()) :
+            getStringFromLong(coreCaseData.getCeId());
     }
 
     private String getStringFromLong(Long input) {
