@@ -42,7 +42,6 @@ class CoreCaseDataFilterComponentImplTest {
     @InjectMocks
     private CoreCaseDataFilterComponentImpl underTest;
 
-    @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
     @Test
     void givenRangeOfDates_whenFilterByDate_thenReturnDataOnlyWithinDates() {
         ReflectionTestUtils.setField(underTest, FILTER_KEY, DEFAULT_FILTER_VALUE);
@@ -60,7 +59,6 @@ class CoreCaseDataFilterComponentImplTest {
             "Date filter did not work as expected.");
     }
 
-    @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
     @Test
     void givenRangeOfDatesWithSameDayDates_whenFilterByDate_thenReturnDataOnlyWithinDates() {
         ReflectionTestUtils.setField(underTest, FILTER_KEY, DEFAULT_FILTER_VALUE);
@@ -84,7 +82,6 @@ class CoreCaseDataFilterComponentImplTest {
             "Date filter with on same day date did not work as expected.");
     }
 
-    @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
     @Test
     void givenSpecificCaseType_whenFilter_thenReturnDataOnlyWithCaseType() {
         ReflectionTestUtils.setField(underTest, FILTER_KEY, "NEWCASETYPE");

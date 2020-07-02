@@ -8,10 +8,8 @@ import uk.gov.hmcts.reform.mi.micore.model.CoreCaseData;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.DataParserComponent;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.FilterComponent;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,8 +36,7 @@ public class CoreCaseDataFilterComponentImpl implements FilterComponent<CoreCase
     }
 
     private boolean filterByDate(CoreCaseData coreCaseData, OffsetDateTime fromDate, OffsetDateTime toDate) {
-        LocalDate eventCreatedDate =
-            OffsetDateTime.ofInstant(Instant.ofEpochMilli(coreCaseData.getCeCreatedDate()), ZoneOffset.UTC).toLocalDate();
+        LocalDate eventCreatedDate = coreCaseData.getCeCreatedDate().toLocalDate();
 
         // Minus and plus 1 day to account to include same day events
         return eventCreatedDate.isAfter(fromDate.toLocalDate().minusDays(1L))
