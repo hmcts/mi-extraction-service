@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import static uk.gov.hmcts.reform.mi.miextractionservice.domain.MiExtractionServiceConstants.NO_FILTER_VALUE;
 
 @Component
-public class CoreCaseDataFilterComponentImpl implements FilterComponent<CoreCaseData> {
+public class CoreCaseDataFilterComponentImpl implements FilterComponent {
 
     @Value("${filter.ccd.case-type}")
     private String filterCaseType;

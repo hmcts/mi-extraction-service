@@ -20,7 +20,7 @@ import static uk.gov.hmcts.reform.mi.miextractionservice.domain.MiExtractionServ
 import static uk.gov.hmcts.reform.mi.miextractionservice.domain.MiExtractionServiceConstants.NO_FILTER_VALUE;
 
 @Component
-public class NotifyFilterComponentImpl implements FilterComponent<NotificationOutput> {
+public class NotifyFilterComponentImpl implements FilterComponent {
 
     @Value("${filter.notify.service}")
     private String filterService;
