@@ -17,6 +17,7 @@ import java.util.List;
 public class NotifyWriteDataComponentImpl implements WriteDataComponent {
 
     @Autowired
+    @Qualifier("notify")
     private FilterComponent filterComponent;
 
     @Autowired

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.mi.miextractionservice.component.impl.notify;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,7 @@ import static uk.gov.hmcts.reform.mi.miextractionservice.domain.MiExtractionServ
 import static uk.gov.hmcts.reform.mi.miextractionservice.domain.MiExtractionServiceConstants.NO_FILTER_VALUE;
 
 @Component
+@Qualifier("notify")
 public class NotifyFilterComponentImpl implements FilterComponent {
 
     @Value("${filter.notify.service}")

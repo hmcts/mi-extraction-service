@@ -17,6 +17,7 @@ import java.util.List;
 public class CoreCaseDataWriteDataComponentImpl implements WriteDataComponent {
 
     @Autowired
+    @Qualifier("ccd")
     private FilterComponent filterComponent;
 
     @Autowired
