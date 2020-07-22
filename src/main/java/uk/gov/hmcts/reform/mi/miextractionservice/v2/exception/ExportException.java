@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.mi.miextractionservice.exception;
+package uk.gov.hmcts.reform.mi.miextractionservice.v2.exception;
 
 public class ExportException extends RuntimeException {
 

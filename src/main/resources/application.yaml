@@ -1,0 +1,89 @@
+# Spring
+spring:
+  application:
+    name: mi-extraction-service
+
+info:
+  app:
+    name: ${spring.application.name}
+
+# Application Insights
+application-insights:
+  default:
+    modules:
+      WebSyntheticRequestTelemetryInitializer:
+        enabled: false
+
+# Azure
+azure:
+  application-insights:
+    instrumentation-key: ${APPINSIGHTS_INSTRUMENTATIONKEY:""}
+  managed-identity:
+    client-id: ${MI_CLIENT_ID:}
+  storage-account:
+    staging:
+      name: ${STORAGE_STAGING_NAME:}
+      connection-string: ${STORAGE_STAGING_CONNECTION_STRING:}
+    export:
+      name: ${STORAGE_EXPORT_NAME:}
+      connection-string: ${STORAGE_EXPORT_CONNECTION_STRING:}
+
+# Export
+export:
+  ccd:
+    enabled: true
+    date-field: ce_created_date
+  notify:
+    enabled: true
+    date-field: created_at
+    timezone: Europe/London # Dates are stored in UTC but processed by Notify in BST
+  payment-history:
+    enabled: true
+    date-field: sh_date_updated
+  payment-allocation:
+    enabled: true
+    date-field: date_created
+  payment-remission:
+    enabled: true
+    date-field: date_updated
+  payment-fee:
+    enabled: true
+    date-field: date_updated
+
+# Whitelist
+container-whitelist: ${CONTAINER_WHITELIST:}#{T(java.util.Collections).emptyList()}
+
+# Dates
+retrieve-from-date: ${RETRIEVE_FROM_DATE:}
+retrieve-to-date: ${RETRIEVE_TO_DATE:}
+
+# Buffer
+max-lines-buffer: 3000
+
+# Archiving
+archive:
+  compression:
+    enabled: true
+  encryption:
+    enabled: false
+    password:
+
+# Filters
+filter:
+  data-source: ${FILTER_DATA_SOURCE:all}
+
+# Mail
+mail:
+  targets: ${MAIL_TARGETS:}
+  gov:
+    uk:
+      api-key: ${GOV_UK_NOTIFY_API_KEY:}
+      templates:
+        blob-url: ${GOV_UK_NOTIFY_BLOB_URL_TEMPLATE_ID:de8b6fb6-8737-46f3-9c16-a1e79a3c781d}
+  sas:
+    enabled: ${MAIL_SAS_ENABLED:false}
+
+# Smoke Test
+smoke:
+  test:
+    enabled: false
