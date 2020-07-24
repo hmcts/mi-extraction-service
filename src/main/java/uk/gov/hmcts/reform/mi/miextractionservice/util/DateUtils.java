@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.mi.miextractionservice.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -48,8 +49,9 @@ public final class DateUtils {
 
     public static LocalDate getRetrievalDate(String retrieveDate) {
         return Optional.ofNullable(retrieveDate)
+            .filter(StringUtils::isNotEmpty)
             .map(fromDate -> parseDateString(retrieveDate))
-            .orElse(LocalDate.now());
+            .orElse(LocalDate.now().minusDays(1L)); // Default to extracting yesterday's data.
     }
 
     public static List<String> getListOfYearsAndMonthsBetweenDates(LocalDate fromDate, LocalDate toDate) {

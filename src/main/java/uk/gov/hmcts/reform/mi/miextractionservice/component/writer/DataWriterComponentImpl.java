@@ -45,6 +45,7 @@ public class DataWriterComponentImpl implements DataWriterComponent {
                     JsonNode jsonNode = dataParserComponent.parseJsonString(line);
                     if (dateFilterComponent.filterByDate(jsonNode, sourceProperties, fromDate, toDate)) {
                         bufferedWriter.write(line);
+                        bufferedWriter.newLine();
                         recordsCount++;
                     }
                 }

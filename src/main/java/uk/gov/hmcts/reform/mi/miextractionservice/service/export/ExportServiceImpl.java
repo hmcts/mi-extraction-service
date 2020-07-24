@@ -42,7 +42,7 @@ import static uk.gov.hmcts.reform.mi.miextractionservice.domain.Constants.ZIP_EX
 public class ExportServiceImpl implements ExportService {
 
     private final @Value("${archive.compression.enabled}") String archiveEnabled;
-    private final @Value("${mail,enabled}") String mailEnabled;
+    private final @Value("${mail.enabled}") String mailEnabled;
     private final @Value("${container-whitelist}") List<String> containerWhitelist;
     private final @Value("${retrieve-from-date}") String retrieveFromDate;
     private final @Value("${retrieve-to-date}") String retrieveToDate;
