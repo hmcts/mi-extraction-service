@@ -1,8 +1,6 @@
 package uk.gov.hmcts.reform.mi.miextractionservice.test;
 
 import com.azure.storage.blob.BlobServiceClient;
-import com.dumbster.smtp.SimpleSmtpServer;
-import com.dumbster.smtp.SmtpMessage;
 import net.lingala.zip4j.ZipFile;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +14,8 @@ import org.testcontainers.junit.jupiter.Container;
 
 import uk.gov.hmcts.reform.mi.micore.factory.BlobServiceClientFactory;
 import uk.gov.hmcts.reform.mi.miextractionservice.TestConfig;
-import uk.gov.hmcts.reform.mi.miextractionservice.factory.ExtractionBlobServiceClientFactory;
-import uk.gov.hmcts.reform.mi.miextractionservice.service.BlobExportService;
+import uk.gov.hmcts.reform.mi.miextractionservice.factory.azure.ExtractionBlobServiceClientFactory;
+import uk.gov.hmcts.reform.mi.miextractionservice.service.export.ExportService;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -25,9 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,8 +48,7 @@ public class CoreCaseDataExportTest {
         + "BlobEndpoint=http://%s:%d/devstoreaccount1;";
 
     private static final String DEFAULT_HOST = "127.0.0.1";
-    private static final String TEST_MAIL_ADDRESS = "TestMailAddress";
-    private static final String EXTRACT_FILE_NAME = "1970-01-01-1970-01-02-CCD_EXTRACT.jsonl";
+    private static final String EXTRACT_FILE_NAME = "ccd-1970-01-01-1970-01-02.jsonl";
 
     @Autowired
     private BlobServiceClientFactory blobServiceClientFactory;
@@ -73,18 +68,14 @@ public class CoreCaseDataExportTest {
     private BlobServiceClient stagingBlobServiceClient;
     private BlobServiceClient exportBlobServiceClient;
 
-    private SimpleSmtpServer dumbster;
-
     @Autowired
     private ExtractionBlobServiceClientFactory extractionBlobServiceClientFactory;
 
     @Autowired
-    private BlobExportService underTest;
+    private ExportService classToTest;
 
     @BeforeEach
     public void setUp() throws Exception {
-        dumbster = SimpleSmtpServer.start(TestConfig.mailerPort);
-
         STAGING_CONTAINER.start();
         EXPORT_CONTAINER.start();
 
@@ -97,7 +88,6 @@ public class CoreCaseDataExportTest {
         exportBlobServiceClient = blobServiceClientFactory
             .getBlobClientWithConnectionString(String.format(DEFAULT_CONN_STRING, DEFAULT_HOST, exportPort));
 
-        ReflectionTestUtils.setField(underTest, "dataSource", "CoreCaseData");
         ReflectionTestUtils.setField(extractionBlobServiceClientFactory, "clientId", null);
         ReflectionTestUtils.setField(extractionBlobServiceClientFactory,
             "stagingConnString", String.format(DEFAULT_CONN_STRING, DEFAULT_HOST, stagingPort));
@@ -107,8 +97,6 @@ public class CoreCaseDataExportTest {
 
     @AfterEach
     public void tearDown() {
-        dumbster.stop();
-
         STAGING_CONTAINER.stop();
         EXPORT_CONTAINER.stop();
 
@@ -140,7 +128,7 @@ public class CoreCaseDataExportTest {
         assertFalse(exportBlobServiceClient.getBlobContainerClient(TEST_CONTAINER_NAME)
             .getBlobClient(TEST_BLOB_NAME).exists(), "Leftover first blob exists.");
 
-        underTest.exportBlobs();
+        classToTest.exportData();
 
         assertTrue(exportBlobServiceClient.getBlobContainerClient(CCD_EXPORT_CONTAINER_NAME).exists(), "No container was created.");
         assertTrue(exportBlobServiceClient.getBlobContainerClient(CCD_EXPORT_CONTAINER_NAME)
@@ -151,27 +139,16 @@ public class CoreCaseDataExportTest {
         }
 
         ZipFile zipFile = new ZipFile(TEST_EXPORT_BLOB);
-
         zipFile.extractFile(EXTRACT_FILE_NAME, ".");
 
         assertTrue(new File(EXTRACT_FILE_NAME).exists(), "Expected archived file to be extracted.");
-
-        List<SmtpMessage> receivedEmails = dumbster.getReceivedEmails();
-        assertEquals(1, receivedEmails.size(), "Should have receivied only 1 email.");
-
-        SmtpMessage email = receivedEmails.get(0);
-        assertEquals(TEST_MAIL_ADDRESS, email.getHeaderValue("To"), "Should have sent an email to TestMailAddress.");
-        assertEquals("Management Information Exported Data Url", email.getHeaderValue("Subject"),
-            "Should have a static subject message.");
-        assertTrue(email.getBody().contains(TEST_EXPORT_BLOB),
-            "Should have output blob name somewhere in email body as part of the generated SAS url.");
     }
 
     @Test
     public void givenInvalidConnectionString_whenExportBlob_thenExceptionIsThrown() {
         ReflectionTestUtils.setField(extractionBlobServiceClientFactory, "stagingConnString", "InvalidConnectionString");
 
-        assertThrows(Exception.class, () -> underTest.exportBlobs());
+        assertThrows(Exception.class, () -> classToTest.exportData());
 
         assertFalse(exportBlobServiceClient.getBlobContainerClient(TEST_CONTAINER_NAME).exists(),
             "Container was unexpectedly created with invalid connection string.");
@@ -181,7 +158,7 @@ public class CoreCaseDataExportTest {
     public void givenInvalidManagedIdentity_whenExportBlob_thenExceptionIsThrown() {
         ReflectionTestUtils.setField(extractionBlobServiceClientFactory, "clientId", "InvalidIdentity");
 
-        assertThrows(Exception.class, () -> underTest.exportBlobs());
+        assertThrows(Exception.class, () -> classToTest.exportData());
 
         assertFalse(exportBlobServiceClient.getBlobContainerClient(TEST_CONTAINER_NAME).exists(),
             "Container was unexpectedly created with wrong managed identity.");

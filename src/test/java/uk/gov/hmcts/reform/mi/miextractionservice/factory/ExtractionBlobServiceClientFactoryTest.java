@@ -1,15 +1,13 @@
 package uk.gov.hmcts.reform.mi.miextractionservice.factory;
 
 import com.azure.storage.blob.BlobServiceClient;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import uk.gov.hmcts.reform.mi.micore.factory.BlobServiceClientFactory;
+import uk.gov.hmcts.reform.mi.miextractionservice.factory.azure.ExtractionBlobServiceClientFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -24,54 +22,63 @@ class ExtractionBlobServiceClientFactoryTest {
     private static final String TEST_STAGING_CONN_STRING = "testStaging";
     private static final String TEST_EXPORT_CONN_STRING = "testExport";
 
-    @Mock
-    private BlobServiceClientFactory blobServiceClientFactory;
+    @Mock private BlobServiceClientFactory blobServiceClientFactory;
 
-    @InjectMocks
-    private ExtractionBlobServiceClientFactory underTest;
-
-    private BlobServiceClient blobServiceClient;
-
-    @BeforeEach
-    void setUp() {
-        blobServiceClient = mock(BlobServiceClient.class);
-    }
+    private ExtractionBlobServiceClientFactory classToTest;
 
     @Test
     void givenManagedIdentity_whenGetStagingBlobServiceClient_returnStagingBlobServiceClient() {
-        ReflectionTestUtils.setField(underTest, "clientId", TEST_CLIENT_ID);
-        ReflectionTestUtils.setField(underTest, "stagingName", TEST_STAGING_NAME);
+        BlobServiceClient blobServiceClient = mock(BlobServiceClient.class);
+        when(blobServiceClientFactory.getBlobClientWithManagedIdentity(TEST_CLIENT_ID, TEST_STAGING_NAME))
+            .thenReturn(blobServiceClient);
 
-        when(blobServiceClientFactory.getBlobClientWithManagedIdentity(TEST_CLIENT_ID, TEST_STAGING_NAME)).thenReturn(blobServiceClient);
+        classToTest = new ExtractionBlobServiceClientFactory(TEST_CLIENT_ID, TEST_STAGING_NAME, null,
+                                                           null, null, blobServiceClientFactory);
 
-        assertEquals(blobServiceClient, underTest.getStagingClient(), "Managed Identity staging blob client was not retrieved.");
+        BlobServiceClient actual = classToTest.getStagingClient();
+
+        assertEquals(blobServiceClient, actual, "Should return staging BlobServiceClient for Managed Identity.");
     }
 
     @Test
     void givenManagedIdentity_whenGetExportBlobServiceClient_returnExportBlobServiceClient() {
-        ReflectionTestUtils.setField(underTest, "clientId", TEST_CLIENT_ID);
-        ReflectionTestUtils.setField(underTest, "exportName", TEST_EXPORT_NAME);
+        BlobServiceClient blobServiceClient = mock(BlobServiceClient.class);
+        when(blobServiceClientFactory.getBlobClientWithManagedIdentity(TEST_CLIENT_ID, TEST_EXPORT_NAME))
+            .thenReturn(blobServiceClient);
 
-        when(blobServiceClientFactory.getBlobClientWithManagedIdentity(TEST_CLIENT_ID, TEST_EXPORT_NAME)).thenReturn(blobServiceClient);
+        classToTest = new ExtractionBlobServiceClientFactory(TEST_CLIENT_ID, null, TEST_EXPORT_NAME,
+                                                           null, null, blobServiceClientFactory);
 
-        assertEquals(blobServiceClient, underTest.getExportClient(), "Managed Identity export blob client was not retrieved.");
+        BlobServiceClient actual = classToTest.getExportClient();
+
+        assertEquals(blobServiceClient, actual, "Should return export BlobServiceClient for Managed Identity.");
     }
 
     @Test
     void givenConnectionString_whenGetStagingBlobServiceClient_returnStagingBlobServiceClient() {
-        ReflectionTestUtils.setField(underTest, "stagingConnString", TEST_STAGING_CONN_STRING);
+        BlobServiceClient blobServiceClient = mock(BlobServiceClient.class);
+        when(blobServiceClientFactory.getBlobClientWithConnectionString(TEST_STAGING_CONN_STRING))
+            .thenReturn(blobServiceClient);
 
-        when(blobServiceClientFactory.getBlobClientWithConnectionString(TEST_STAGING_CONN_STRING)).thenReturn(blobServiceClient);
+        classToTest = new ExtractionBlobServiceClientFactory(null, null, null,
+                                                           TEST_STAGING_CONN_STRING, null, blobServiceClientFactory);
 
-        assertEquals(blobServiceClient, underTest.getStagingClient(), "Connection string staging blob client was not retrieved.");
+        BlobServiceClient actual = classToTest.getStagingClient();
+
+        assertEquals(blobServiceClient, actual, "Should return staging BlobServiceClient for connection string.");
     }
 
     @Test
     void givenConnectionString_whenGetExportBlobServiceClient_returnExportBlobServiceClient() {
-        ReflectionTestUtils.setField(underTest, "exportConnString", TEST_EXPORT_CONN_STRING);
+        BlobServiceClient blobServiceClient = mock(BlobServiceClient.class);
+        when(blobServiceClientFactory.getBlobClientWithConnectionString(TEST_EXPORT_CONN_STRING))
+            .thenReturn(blobServiceClient);
 
-        when(blobServiceClientFactory.getBlobClientWithConnectionString(TEST_EXPORT_CONN_STRING)).thenReturn(blobServiceClient);
+        classToTest = new ExtractionBlobServiceClientFactory(null, null, null,
+                                                           null, TEST_EXPORT_CONN_STRING, blobServiceClientFactory);
 
-        assertEquals(blobServiceClient, underTest.getExportClient(), "Connection string export blob client was not retrieved.");
+        BlobServiceClient actual = classToTest.getExportClient();
+
+        assertEquals(blobServiceClient, actual, "Should return export BlobServiceClient for connection string.");
     }
 }

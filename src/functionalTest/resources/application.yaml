@@ -17,16 +17,16 @@ application-insights:
 # Azure
 azure:
   application-insights:
-    instrumentation-key: ${APPINSIGHTS_INSTRUMENTATIONKEY:""}
+    instrumentation-key: ""
   managed-identity:
-    client-id: ${MI_CLIENT_ID:}
+    client-id: "clientId"
   storage-account:
     staging:
-      name: ${STORAGE_STAGING_NAME:}
-      connection-string: ${STORAGE_STAGING_CONNECTION_STRING:}
+      name: "staging"
+      connection-string: "connString"
     export:
-      name: ${STORAGE_EXPORT_NAME:}
-      connection-string: ${STORAGE_EXPORT_CONNECTION_STRING:}
+      name: "export"
+      connection-string: "connString"
 
 # Export
 export:
@@ -51,11 +51,11 @@ export:
     date-field: date_updated
 
 # Whitelist
-container-whitelist: ${CONTAINER_WHITELIST:}#{T(java.util.Collections).emptyList()}
+container-whitelist: ${T(java.util.Collections).emptyList()}
 
 # Dates
-retrieve-from-date: ${RETRIEVE_FROM_DATE:}
-retrieve-to-date: ${RETRIEVE_TO_DATE:}
+retrieve-from-date: 1970-01-01
+retrieve-to-date: 1970-01-02
 
 # Archiving
 archive:
@@ -67,11 +67,11 @@ archive:
 
 # Mail
 mail:
-  targets: ${MAIL_TARGETS:}
+  targets: "TestMailAddress"
   gov-uk:
-    api-key: ${GOV_UK_NOTIFY_API_KEY:}
+    api-key: "testApiKey"
     templates:
-      blob-url: ${GOV_UK_NOTIFY_BLOB_URL_TEMPLATE_ID:de8b6fb6-8737-46f3-9c16-a1e79a3c781d}
+      blob-url: "testTemplate"
 
 # Smoke Test
 smoke:

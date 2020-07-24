@@ -12,7 +12,7 @@ public final class TestConstants {
     public static final String TEST_BLOB_NAME = "testblob-" + TEST_ID + "-1970-01";
 
     public static final String CCD_EXPORT_CONTAINER_NAME = "ccd";
-    public static final String TEST_EXPORT_BLOB = "1970-01-01-1970-01-02-CCD_EXTRACT.zip";
+    public static final String TEST_EXPORT_BLOB = "ccd-1970-01-01-1970-01-02.zip";
 
     public static final String TEST_CCD_JSONL = "{\"extraction_date\":\"19991201-1010\","
         + "\"ce_id\":1000001,\"ce_case_data_id\":100001,\"ce_created_date\":1001,"
@@ -22,7 +22,7 @@ public final class TestConstants {
 
     public static final String NOTIFY_TEST_CONTAINER_NAME = "notify-testcontainer-" + TEST_ID;
     public static final String NOTIFY_EXPORT_CONTAINER_NAME = "notify";
-    public static final String NOTIFY_TEST_EXPORT_BLOB = "1970-01-01-1970-01-02-NOTIFY_EXTRACT.zip";
+    public static final String NOTIFY_TEST_EXPORT_BLOB = "notify-1970-01-01-1970-01-02.zip";
 
     public static final String TEST_NOTIFY_JSONL = "{\"extraction_date\":\"19991201-1010\","
         + "\"id\":1000001,\"service\":\"service\",\"reference\":\"reference\","
@@ -36,10 +36,10 @@ public final class TestConstants {
     public static final String PAYMENT_ALLOCATION_EXPORT_CONTAINER_NAME = "payment-allocation";
     public static final String PAYMENT_REMISSION_EXPORT_CONTAINER_NAME = "payment-remission";
     public static final String PAYMENT_FEE_EXPORT_CONTAINER_NAME = "payment-fee";
-    public static final String PAYMENT_HISTORY_TEST_EXPORT_BLOB = "1970-01-01-1970-01-02-payment-history-extract.jsonl";
-    public static final String PAYMENT_ALLOCATION_TEST_EXPORT_BLOB = "1970-01-01-1970-01-02-payment-allocation-extract.jsonl";
-    public static final String PAYMENT_REMISSION_TEST_EXPORT_BLOB = "1970-01-01-1970-01-02-payment-remission-extract.jsonl";
-    public static final String PAYMENT_FEE_TEST_EXPORT_BLOB = "1970-01-01-1970-01-02-payment-fee-extract.jsonl";
+    public static final String PAYMENT_HISTORY_TEST_EXPORT_BLOB = "payment-history-1970-01-01-1970-01-02.jsonl";
+    public static final String PAYMENT_ALLOCATION_TEST_EXPORT_BLOB = "payment-allocation-1970-01-01-1970-01-02.jsonl";
+    public static final String PAYMENT_REMISSION_TEST_EXPORT_BLOB = "payment-remission-1970-01-01-1970-01-02.jsonl";
+    public static final String PAYMENT_FEE_TEST_EXPORT_BLOB = "payment-fee-1970-01-01-1970-01-02.jsonl";
 
     public static final String TEST_PAYMENT_JSONL = "{\"extraction_date\":\"19991201-1010\","
         + "\"id\":\"id\",\"date_created\":\"1970-01-01T01:00:00.000000Z\",\"date_updated\":\"1970-01-01T01:00:00.000000Z\","
