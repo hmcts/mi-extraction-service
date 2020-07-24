@@ -88,7 +88,6 @@ public class NotifyDataExportTest {
         exportBlobServiceClient = blobServiceClientFactory
             .getBlobClientWithConnectionString(String.format(DEFAULT_CONN_STRING, DEFAULT_HOST, exportPort));
 
-        ReflectionTestUtils.setField(classToTest, "dataSource", "Notify");
         ReflectionTestUtils.setField(extractionBlobServiceClientFactory, "clientId", null);
         ReflectionTestUtils.setField(extractionBlobServiceClientFactory,
             "stagingConnString", String.format(DEFAULT_CONN_STRING, DEFAULT_HOST, stagingPort));

@@ -29,7 +29,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.lang.Boolean.TRUE;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.parseBoolean;
+import static java.time.format.DateTimeFormatter.ISO_DATE;
 import static uk.gov.hmcts.reform.mi.miextractionservice.domain.Constants.JSONL_EXTENSION;
 import static uk.gov.hmcts.reform.mi.miextractionservice.domain.Constants.NEWLINE_DELIMITER;
 import static uk.gov.hmcts.reform.mi.miextractionservice.domain.Constants.ZIP_EXTENSION;
@@ -40,6 +42,7 @@ import static uk.gov.hmcts.reform.mi.miextractionservice.domain.Constants.ZIP_EX
 public class ExportServiceImpl implements ExportService {
 
     private final @Value("${archive.compression.enabled}") String archiveEnabled;
+    private final @Value("${mail,enabled}") String mailEnabled;
     private final @Value("${container-whitelist}") List<String> containerWhitelist;
     private final @Value("${retrieve-from-date}") String retrieveFromDate;
     private final @Value("${retrieve-to-date}") String retrieveToDate;
@@ -57,10 +60,16 @@ public class ExportServiceImpl implements ExportService {
         List<String> messages = new ArrayList<>();
 
         exportProperties.getSources().forEach(
-            (source, properties) -> exportDataForSource(stagingClient, exportClient, source, properties, messages)
+            (source, properties) -> {
+                if (properties.isEnabled()) {
+                    exportDataForSource(stagingClient, exportClient, source, properties, messages);
+                }
+            }
         );
 
-        notifyTargetsComponent.sendMessage(String.join(NEWLINE_DELIMITER, messages));
+        if (parseBoolean(mailEnabled)) {
+            notifyTargetsComponent.sendMessage(String.join(NEWLINE_DELIMITER, messages));
+        }
     }
 
     @SuppressWarnings("squid:S899")
@@ -90,7 +99,7 @@ public class ExportServiceImpl implements ExportService {
         final List<String> datesToParse = DateUtils.getListOfYearsAndMonthsBetweenDates(fromDate, toDate);
 
         final List<BlobContainerItem> containersToParse = stagingClient.listBlobContainers().stream()
-            .filter(container -> containerWhitelist.isEmpty() || containerWhitelist.contains(container.getName()))
+            .filter(container -> ContainerUtils.checkWhitelist(containerWhitelist, container.getName()))
             .filter(container -> container.getName().startsWith(ContainerUtils.getContainerPrefix(source)))
             .collect(Collectors.toList());
 
@@ -107,11 +116,15 @@ public class ExportServiceImpl implements ExportService {
             throw new ExportException("Exception occurred when writing data for source: " + source, e);
         }
 
-        uploadFileToBlobStore(exportClient, source, fromDate, toDate);
+        if (totalRecords > 0) {
+            uploadFileToBlobStore(exportClient, source, fromDate, toDate);
 
-        log.info("Uploaded total of {} records for source {} with file name {}", totalRecords, source, fileName);
+            log.info("Uploaded total of {} records for source {} with file name {}", totalRecords, source, fileName);
 
-        messages.add(String.format("Blob %s uploaded to container %s.", fileName, source));
+            messages.add(String.format("Blob %s uploaded to container %s.", fileName, source));
+        } else {
+            log.info("Nothing to upload for source {} in date range {} to {}", source, fromDate.format(ISO_DATE), toDate.format(ISO_DATE));
+        }
     }
 
     private int parseContainerForData(BlobServiceClient serviceClient,
@@ -144,13 +157,17 @@ public class ExportServiceImpl implements ExportService {
         String fileName = FileUtils.getExportName(source, fromDate, toDate, JSONL_EXTENSION);
         String zipName = FileUtils.getExportName(source, fromDate, toDate, ZIP_EXTENSION);
 
-        if (TRUE.equals(archiveEnabled)) {
+        if (parseBoolean(archiveEnabled)) {
             archiveComponent.createArchive(Collections.singletonList(fileName), zipName);
         }
 
-        String blobName = TRUE.equals(archiveEnabled) ? zipName : fileName;
+        String blobName = parseBoolean(archiveEnabled) ? zipName : fileName;
 
         BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(source);
+        if (FALSE.equals(blobContainerClient.exists())) {
+            blobContainerClient.create();
+        }
+
         BlobClient blobClient = blobContainerClient.getBlobClient(blobName);
 
         blobClient.uploadFromFile(blobName, true);

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.mi.miextractionservice.domain.SourceProperties;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Optional;
 
@@ -17,8 +18,8 @@ public class DateFilterComponentImpl implements DateFilterComponent {
     @Override
     public boolean filterByDate(JsonNode data, SourceProperties sourceProperties, LocalDate fromDate, LocalDate toDate) {
         String dateString = data.get(sourceProperties.getDateField()).asText();
-        ZoneOffset zone = Optional.ofNullable(sourceProperties.getTimezone())
-            .map(timezone -> ZoneOffset.of(sourceProperties.getTimezone()))
+        ZoneId zone = Optional.ofNullable(sourceProperties.getTimezone())
+            .map(timezone -> ZoneId.of(sourceProperties.getTimezone()))
             .orElse(ZoneOffset.UTC);
 
         LocalDate date = parseDateString(dateString, zone);
