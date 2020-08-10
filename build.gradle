@@ -108,6 +108,7 @@ project.tasks['sonarqube'].dependsOn test, jacocoTestReport
 
 def sonarExclusions = [
     '**uk/gov/hmcts/reform/mi/miextractionservice/MiExtractionServiceApplication.java',
+    '**uk/gov/hmcts/reform/mi/miextractionservice/config/**',
     '**uk/gov/hmcts/reform/mi/miextractionservice/domain/**',
     '**uk/gov/hmcts/reform/mi/miextractionservice/util/FileUtils**'
 ]
@@ -275,6 +276,7 @@ pitest {
   pitestVersion = '1.5.0'
   targetClasses = ['uk.gov.hmcts.reform.mi.miextractionservice.*']
   excludedClasses = ['uk.gov.hmcts.reform.mi.miextractionservice.MiExtractionServiceApplication*',
+                     'uk.gov.hmcts.reform.mi.miextractionservice.config.*',
                      'uk.gov.hmcts.reform.mi.miextractionservice.domain.*',
                      'uk.gov.hmcts.reform.mi.miextractionservice.exception.*',
                      'uk.gov.hmcts.reform.mi.miextractionservice.util.FileUtils*']

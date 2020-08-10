@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.mi.miextractionservice.factory.azure.ExtractionBlobSe
 import uk.gov.hmcts.reform.mi.miextractionservice.test.stubs.PagedIterableStub;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
@@ -28,6 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -248,6 +251,45 @@ class ExportServiceImplTest {
 
         verify(exportContainer, never()).create();
         verify(exportBlob, times(1)).uploadFromFile(OUTPUT_BLOB_NAME, true);
+        verify(notifyTargetsComponent, never()).sendMessage(anyString());
+    }
+
+    @Test
+    void givenExceptionWhenWritingData_whenExportData_thenSkipBlobUpload() {
+        Map<String, SourceProperties> sourcePropertiesMap = new ConcurrentHashMap<>();
+        sourcePropertiesMap.put(ENABLED_SOURCE_1, SourceProperties.builder().enabled(true).build());
+        when(exportProperties.getSources()).thenReturn(sourcePropertiesMap);
+
+        BlobContainerItem blobContainerItem = mock(BlobContainerItem.class);
+        when(blobContainerItem.getName()).thenReturn(ENABLED_CONTAINER_1);
+        when(stagingClient.listBlobContainers()).thenReturn(new PagedIterableStub<>(blobContainerItem));
+
+        BlobContainerClient blobContainerClient = mock(BlobContainerClient.class);
+        when(stagingClient.getBlobContainerClient(ENABLED_CONTAINER_1)).thenReturn(blobContainerClient);
+
+        BlobItem blobItem = mock(BlobItem.class);
+        when(blobItem.getName()).thenReturn(BLOB_IN_DATE);
+        when(blobContainerClient.listBlobs()).thenReturn(new PagedIterableStub<>(blobItem));
+
+        BlobClient blobClient = mock(BlobClient.class);
+        when(blobContainerClient.getBlobClient(BLOB_IN_DATE)).thenReturn(blobClient);
+
+        doAnswer(invocation -> {
+            throw new IOException("Write went wrong.");
+        }).when(dataWriterComponent).writeRecordsForDateRange(any(BufferedWriter.class),
+                                                              eq(blobClient),
+                                                              any(SourceProperties.class),
+                                                              eq(TEST_DATE_AS_LOCALDATE),
+                                                              eq(TEST_DATE_AS_LOCALDATE));
+
+        classToTest = new ExportServiceImpl(FALSE_VALUE, FALSE_VALUE, Collections.emptyList(), TEST_DATE, TEST_DATE,
+                                            extractionBlobServiceClientFactory, exportProperties,
+                                            dataWriterComponent, archiveComponent, notifyTargetsComponent);
+
+        classToTest.exportData();
+
+        verify(exportClient, never()).getBlobContainerClient(anyString());
+
         verify(notifyTargetsComponent, never()).sendMessage(anyString());
     }
 }
