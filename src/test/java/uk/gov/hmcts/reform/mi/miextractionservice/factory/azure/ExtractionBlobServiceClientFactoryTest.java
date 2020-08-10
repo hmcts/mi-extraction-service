@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.mi.miextractionservice.factory;
+package uk.gov.hmcts.reform.mi.miextractionservice.factory.azure;
 
 import com.azure.storage.blob.BlobServiceClient;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import uk.gov.hmcts.reform.mi.micore.factory.BlobServiceClientFactory;
-import uk.gov.hmcts.reform.mi.miextractionservice.factory.azure.ExtractionBlobServiceClientFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;

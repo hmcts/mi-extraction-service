@@ -27,11 +27,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.parseBoolean;
 import static java.time.format.DateTimeFormatter.ISO_DATE;
+import static uk.gov.hmcts.reform.mi.miextractionservice.domain.Constants.DASH_DELIMITER;
 import static uk.gov.hmcts.reform.mi.miextractionservice.domain.Constants.JSONL_EXTENSION;
 import static uk.gov.hmcts.reform.mi.miextractionservice.domain.Constants.NEWLINE_DELIMITER;
 import static uk.gov.hmcts.reform.mi.miextractionservice.domain.Constants.ZIP_EXTENSION;
@@ -57,12 +59,18 @@ public class ExportServiceImpl implements ExportService {
         BlobServiceClient stagingClient = extractionBlobServiceClientFactory.getStagingClient();
         BlobServiceClient exportClient = extractionBlobServiceClientFactory.getExportClient();
 
+        checkStorageConnection(); // To fail early if unable to connect to storage accounts.
+
         List<String> messages = new ArrayList<>();
 
         exportProperties.getSources().forEach(
             (source, properties) -> {
                 if (properties.isEnabled()) {
-                    exportDataForSource(stagingClient, exportClient, source, properties, messages);
+                    try {
+                        exportDataForSource(stagingClient, exportClient, source, properties, messages);
+                    } catch (Exception e) {
+                        log.error("Unable to parse data for source {}. Skipping.", source, e);
+                    }
                 }
             }
         );
@@ -98,6 +106,8 @@ public class ExportServiceImpl implements ExportService {
         final LocalDate toDate = DateUtils.getRetrievalDate(retrieveToDate);
         final List<String> datesToParse = DateUtils.getListOfYearsAndMonthsBetweenDates(fromDate, toDate);
 
+        log.info("Beginning export of {} data for date range {} to {}", source, fromDate.format(ISO_DATE), toDate.format(ISO_DATE));
+
         final List<BlobContainerItem> containersToParse = stagingClient.listBlobContainers().stream()
             .filter(container -> ContainerUtils.checkWhitelist(containerWhitelist, container.getName()))
             .filter(container -> container.getName().startsWith(ContainerUtils.getContainerPrefix(source)))
@@ -105,7 +115,7 @@ public class ExportServiceImpl implements ExportService {
 
         int totalRecords = 0;
 
-        String fileName = FileUtils.getExportName(source, fromDate, toDate, JSONL_EXTENSION);
+        String fileName = getExportName(source, fromDate, toDate, JSONL_EXTENSION);
 
         try (BufferedWriter writer = FileUtils.openBufferedWriter(fileName)) {
             for (BlobContainerItem containerItem : containersToParse) {
@@ -117,7 +127,7 @@ public class ExportServiceImpl implements ExportService {
         }
 
         if (totalRecords > 0) {
-            uploadFileToBlobStore(exportClient, source, fromDate, toDate);
+            uploadFileToBlobStore(exportClient, source, properties, fromDate, toDate);
 
             log.info("Uploaded total of {} records for source {} with file name {}", totalRecords, source, fileName);
 
@@ -151,11 +161,12 @@ public class ExportServiceImpl implements ExportService {
 
     private void uploadFileToBlobStore(BlobServiceClient blobServiceClient,
                                        String source,
+                                       SourceProperties properties,
                                        LocalDate fromDate,
                                        LocalDate toDate) {
 
-        String fileName = FileUtils.getExportName(source, fromDate, toDate, JSONL_EXTENSION);
-        String zipName = FileUtils.getExportName(source, fromDate, toDate, ZIP_EXTENSION);
+        String fileName = getExportName(source, fromDate, toDate, JSONL_EXTENSION);
+        String zipName = getExportName(source, fromDate, toDate, ZIP_EXTENSION);
 
         if (parseBoolean(archiveEnabled)) {
             archiveComponent.createArchive(Collections.singletonList(fileName), zipName);
@@ -163,7 +174,7 @@ public class ExportServiceImpl implements ExportService {
 
         String blobName = parseBoolean(archiveEnabled) ? zipName : fileName;
 
-        BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(source);
+        BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(getExportContainerName(source, properties));
         if (FALSE.equals(blobContainerClient.exists())) {
             blobContainerClient.create();
         }
@@ -175,5 +186,20 @@ public class ExportServiceImpl implements ExportService {
         // Clean up
         FileUtils.deleteFile(fileName);
         FileUtils.deleteFile(zipName);
+    }
+
+    private String getExportName(String source, LocalDate fromDate, LocalDate toDate, String extension) {
+        return source
+            + DASH_DELIMITER
+            + fromDate.format(ISO_DATE)
+            + DASH_DELIMITER
+            + toDate.format(ISO_DATE)
+            + extension;
+    }
+
+    private String getExportContainerName(String source, SourceProperties properties) {
+        return Optional.ofNullable(properties.getPrefix())
+            .map(prefix -> prefix + DASH_DELIMITER)
+            .orElse("") + source;
     }
 }

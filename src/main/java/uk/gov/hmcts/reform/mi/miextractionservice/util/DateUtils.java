@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -30,8 +31,7 @@ public final class DateUtils {
         LocalDate localDate;
 
         try {
-            localDate = ZonedDateTime.parse(dateString, DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(timezone)
-                .toLocalDate();
+            localDate = parseDateTime(dateString, timezone);
         } catch (DateTimeParseException e) {
             log.debug("Unable to parse {} as ZonedDateTime", dateString, e);
 
@@ -47,6 +47,16 @@ public final class DateUtils {
         return localDate;
     }
 
+    private static LocalDate parseDateTime(String dateString, ZoneId timezone) {
+        try {
+            return ZonedDateTime.parse(dateString, DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(timezone)
+                .toLocalDate();
+        } catch (DateTimeParseException e) {
+            return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyyMMdd-HHmm")) // Legacy Extraction Date Format
+                .toLocalDate();
+        }
+    }
+
     public static LocalDate getRetrievalDate(String retrieveDate) {
         return Optional.ofNullable(retrieveDate)
             .filter(StringUtils::isNotEmpty)
@@ -60,10 +70,10 @@ public final class DateUtils {
         LocalDate currentDate = fromDate.withDayOfMonth(1);
         LocalDate finalDate = toDate.withDayOfMonth(28);
 
-        do {
+        while (currentDate.isBefore(finalDate)) {
             dateList.add(currentDate.format(DateTimeFormatter.ofPattern(YEAR_MONTH_FORMAT)));
             currentDate = currentDate.plusMonths(1L);
-        } while (currentDate.isBefore(finalDate));
+        }
 
         return dateList;
     }

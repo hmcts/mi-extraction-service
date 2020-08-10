@@ -27,16 +27,19 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.CCD_EXPORT_CONTAINER_NAME;
+import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.EXPORT_CONTAINER_NAME;
+import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.EXPORT_EXTRACTION_CONTAINER_NAME;
 import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.TEST_BLOB_NAME;
-import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.TEST_CCD_JSONL;
 import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.TEST_CONTAINER_NAME;
 import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.TEST_EXPORT_BLOB;
+import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.TEST_EXTRACTION_CONTAINER_NAME;
+import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.TEST_EXTRACTION_EXPORT_BLOB;
+import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.TEST_JSONL;
 
 @SuppressWarnings({"unchecked","PMD.AvoidUsingHardCodedIP","PMD.ExcessiveImports"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @SpringBootTest(classes = TestConfig.class)
-public class CoreCaseDataExportTest {
+public class ExportTest {
 
     private static final String AZURITE_IMAGE = "mcr.microsoft.com/azure-storage/azurite";
 
@@ -48,7 +51,7 @@ public class CoreCaseDataExportTest {
         + "BlobEndpoint=http://%s:%d/devstoreaccount1;";
 
     private static final String DEFAULT_HOST = "127.0.0.1";
-    private static final String EXTRACT_FILE_NAME = "ccd-1970-01-01-1970-01-02.jsonl";
+    private static final String EXTRACT_FILE_NAME = "test-1970-01-01-1970-01-02.jsonl";
 
     @Autowired
     private BlobServiceClientFactory blobServiceClientFactory;
@@ -115,27 +118,36 @@ public class CoreCaseDataExportTest {
 
     @Test
     public void givenTestContainer_whenExportBlob_thenArchivedBlobIsCreatedInExportAndEmailIsSent() throws Exception {
-        byte[] inputData = TEST_CCD_JSONL.getBytes();
-        InputStream inputStream = new ByteArrayInputStream(inputData);
+        byte[] inputData = TEST_JSONL.getBytes();
+        InputStream testStream = new ByteArrayInputStream(inputData);
+        InputStream extractionStream = new ByteArrayInputStream(inputData);
 
         stagingBlobServiceClient
             .createBlobContainer(TEST_CONTAINER_NAME)
             .getBlobClient(TEST_BLOB_NAME)
             .getBlockBlobClient()
-            .upload(inputStream, inputData.length);
+            .upload(testStream, inputData.length);
 
-        assertFalse(exportBlobServiceClient.getBlobContainerClient(TEST_CONTAINER_NAME).exists(), "Leftover container exists.");
-        assertFalse(exportBlobServiceClient.getBlobContainerClient(TEST_CONTAINER_NAME)
-            .getBlobClient(TEST_BLOB_NAME).exists(), "Leftover first blob exists.");
+        stagingBlobServiceClient
+            .createBlobContainer(TEST_EXTRACTION_CONTAINER_NAME)
+            .getBlobClient(TEST_BLOB_NAME)
+            .getBlockBlobClient()
+            .upload(extractionStream, inputData.length);
 
         classToTest.exportData();
 
-        assertTrue(exportBlobServiceClient.getBlobContainerClient(CCD_EXPORT_CONTAINER_NAME).exists(), "No container was created.");
-        assertTrue(exportBlobServiceClient.getBlobContainerClient(CCD_EXPORT_CONTAINER_NAME)
-            .getBlobClient(TEST_EXPORT_BLOB).exists(), "No first blob was created.");
+        assertTrue(exportBlobServiceClient.getBlobContainerClient(EXPORT_CONTAINER_NAME).exists(),
+                   "Export container should have been created.");
+        assertTrue(exportBlobServiceClient.getBlobContainerClient(EXPORT_CONTAINER_NAME).getBlobClient(TEST_EXPORT_BLOB).exists(),
+                   "Test blob should have been created.");
+        assertTrue(exportBlobServiceClient.getBlobContainerClient(EXPORT_EXTRACTION_CONTAINER_NAME).exists(),
+                   "Export extraction date container should have been created.");
+        assertTrue(exportBlobServiceClient.getBlobContainerClient(EXPORT_EXTRACTION_CONTAINER_NAME)
+                       .getBlobClient(TEST_EXTRACTION_EXPORT_BLOB).exists(),
+                   "Test extraction date blob should have been created.");
 
         try (OutputStream outputStream = Files.newOutputStream(Paths.get(TEST_EXPORT_BLOB))) {
-            exportBlobServiceClient.getBlobContainerClient(CCD_EXPORT_CONTAINER_NAME).getBlobClient(TEST_EXPORT_BLOB).download(outputStream);
+            exportBlobServiceClient.getBlobContainerClient(EXPORT_CONTAINER_NAME).getBlobClient(TEST_EXPORT_BLOB).download(outputStream);
         }
 
         ZipFile zipFile = new ZipFile(TEST_EXPORT_BLOB);

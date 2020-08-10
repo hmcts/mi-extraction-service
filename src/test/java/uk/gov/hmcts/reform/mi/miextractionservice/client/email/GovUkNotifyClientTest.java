@@ -1,11 +1,9 @@
-package uk.gov.hmcts.reform.mi.miextractionservice.client;
+package uk.gov.hmcts.reform.mi.miextractionservice.client.email;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import uk.gov.hmcts.reform.mi.miextractionservice.client.email.GovUkNotifyClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -9,6 +9,10 @@ import static uk.gov.hmcts.reform.mi.miextractionservice.domain.Constants.DASH_D
 public final class ContainerUtils {
 
     public static String getContainerPrefix(String source) {
+        if (source.contains("-")) {
+            return source;
+        }
+
         return source + DASH_DELIMITER;
     }
 
