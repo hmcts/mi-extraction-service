@@ -7,10 +7,10 @@ public final class TestConstants {
 
     public static final String DASH_DELIMITER = "-";
 
-    public static final String TEST_CONTAINER_NAME = "int-testcontainer";
+    public static final String TEST_CONTAINER_NAME = "exp-testcontainer";
     public static final String TEST_BLOB_NAME = "testblob-" + TEST_ID + "-1970-01";
 
-    public static final String EXPORT_CONTAINER_NAME = "int";
+    public static final String EXPORT_CONTAINER_NAME = "exp";
     public static final String TEST_EXPORT_BLOB = "int-1970-01-01-1970-01-02.zip";
 
     public static final String TEST_JSONL = "{\"extraction_date\":\"19700101-1010\",\"date_updated\":\"1970-01-01T10:00:00.000Z\"}";
