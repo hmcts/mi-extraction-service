@@ -44,7 +44,7 @@ class ExportServiceImplTest {
     private static final String ENABLED_SOURCE_1 = "enabled1";
     private static final String ENABLED_SOURCE_2 = "enabled2";
     private static final String DISABLED_SOURCE = "disabled";
-    private static final String ENABLED_CONTAINER_1 = "enabled1-container";
+    private static final String ENABLED_CONTAINER_1 = "enabled1";
     private static final String BLOB_IN_DATE = "blob-2000-01.jsonl";
     private static final String BLOB_OUT_DATE = "blob-2000-02.jsonl";
     private static final String OUTPUT_BLOB_NAME = "enabled1-2000-01-01-2000-01-01.jsonl";

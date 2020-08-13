@@ -15,4 +15,5 @@ public class SourceProperties {
     String prefix;
     String dateField;
     String timezone;
+    SourceTypeEnum type;
 }

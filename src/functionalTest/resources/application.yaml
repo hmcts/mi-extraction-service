@@ -34,7 +34,8 @@ export:
     test:
       enabled: true
       date-field: date_updated
-    test-extraction:
+      type: prefix
+    extraction-test:
       enabled: true
       date-field: extraction_date
 

@@ -110,7 +110,7 @@ public class ExportServiceImpl implements ExportService {
 
         final List<BlobContainerItem> containersToParse = stagingClient.listBlobContainers().stream()
             .filter(container -> ContainerUtils.checkWhitelist(containerWhitelist, container.getName()))
-            .filter(container -> container.getName().startsWith(ContainerUtils.getContainerPrefix(source)))
+            .filter(container -> ContainerUtils.checkContainerName(container.getName(), source, properties))
             .collect(Collectors.toList());
 
         int totalRecords = 0;
