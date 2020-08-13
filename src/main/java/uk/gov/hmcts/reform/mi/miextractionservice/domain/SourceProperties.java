@@ -1,14 +1,12 @@
 package uk.gov.hmcts.reform.mi.miextractionservice.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
+import org.springframework.boot.context.properties.ConstructorBinding;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder(toBuilder = true)
-@Data
+@Builder
+@Value
+@ConstructorBinding
 public class SourceProperties {
 
     boolean enabled;
