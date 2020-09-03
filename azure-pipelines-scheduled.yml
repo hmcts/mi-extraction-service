@@ -32,9 +32,9 @@ variables:
   azure.prom.aks.cluster: 'ss_aks_$(env.prom)'
   manual.branch.prefix: 'master'
   product: 'mi'
+  helm.repo: 'ssprivate$(env)'
   vault: 'mi-vault-$(env)'
   azure.prom.acr: 'ssprivate$(env.prom)'
-  helmRepo: 'ssprivate-$(env)'
 
 resources:
   repositories:
@@ -42,6 +42,7 @@ resources:
       type: github
       name: hmcts/mi-core-lib
       endpoint: hmcts
+      ref: update-chart-config
 
 stages:
   - template: pipeline-steps/templates/build-deploy-stage.yaml@mi-core
