@@ -1,4 +1,4 @@
 dependencies:
-  - name: mi-job
+  - name: job
     version: ~0.6
     repository: '@hmctspublic'

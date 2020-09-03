@@ -55,6 +55,7 @@ stages:
       promEnv: $(env.prom)
       functionalTest: true
       mutationTest: true
+      helmRepo: $(helm.repo)
       envMapping:
         - key: BUILD_VERSION
           value: Build.BuildId
