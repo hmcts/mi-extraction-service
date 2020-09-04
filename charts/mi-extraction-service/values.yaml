@@ -4,7 +4,6 @@ mi-job:
   cpuLimits: '2000m'
   activeDeadlineSeconds: 3600
   aadIdentityName: mi-extraction-service
-  keyVaultsUsepodidentity: true
   kind: Job
   labels:
     app.kubernetes.io/instance : mi-extraction-service-build-001
