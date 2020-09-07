@@ -4,12 +4,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import uk.gov.hmcts.reform.mi.miextractionservice.domain.SourceProperties;
+import uk.gov.hmcts.reform.mi.miextractionservice.domain.SourceTypeEnum;
+
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("PMD.TooManyMethods") // Test class
 @ExtendWith(SpringExtension.class)
 class ContainerUtilsTest {
 
@@ -20,9 +24,43 @@ class ContainerUtilsTest {
     }
 
     @Test
-    void givenSourceIsStartsWithDelimiter_whenGetContainerPrefix_returnSourceDirectly() {
-        assertEquals("anothertest-", ContainerUtils.getContainerPrefix("anothertest-"),
-                     "Delimited source should return same value.");
+    void givenSourceHasPrefixTypeAndMatchesStartOfContainerName_whenCheckContainer_thenReturnTrue() {
+        SourceProperties sourceProperties = SourceProperties.builder().type(SourceTypeEnum.PREFIX).build();
+        assertTrue(ContainerUtils.checkContainerName("container-hello", "container", sourceProperties),
+                   "Prefix type source should return true when matched against prefix.");
+    }
+
+    @Test
+    void givenSourceHasPrefixTypeAndDoesNotMatchStartOfContainerName_whenCheckContainer_thenReturnFalse() {
+        SourceProperties sourceProperties = SourceProperties.builder().type(SourceTypeEnum.PREFIX).build();
+        assertFalse(ContainerUtils.checkContainerName("hello-container", "container", sourceProperties),
+                   "Prefix type source should return false when no match against prefix.");
+    }
+
+    @Test
+    void givenSourceHasEqualTypeAndDoesNotMatchExactContainerName_whenCheckContainer_thenReturnFalse() {
+        SourceProperties sourceProperties = SourceProperties.builder().type(SourceTypeEnum.EQUAL).build();
+        assertFalse(ContainerUtils.checkContainerName("container-exact", "container", sourceProperties),
+                    "Equal type source should return false when no exact match.");
+    }
+
+    @Test
+    void givenSourceHasEqualTypeAndDoesMatchExactContainerName_whenCheckContainer_thenReturnFalse() {
+        SourceProperties sourceProperties = SourceProperties.builder().type(SourceTypeEnum.EQUAL).build();
+        assertTrue(ContainerUtils.checkContainerName("container-match", "container-match", sourceProperties),
+                   "Equal type source should return false when exact match.");
+    }
+
+    @Test
+    void givenSourceHasNoTypeAndDoesNotMatchExactContainerName_whenCheckContainer_thenReturnFalse() {
+        assertFalse(ContainerUtils.checkContainerName("container-world", "container-", SourceProperties.builder().build()),
+                    "No type source should return false when only matched against prefix.");
+    }
+
+    @Test
+    void givenSourceHasNoTypeAndDoesMatchExactContainerName_whenCheckContainer_thenReturnTrue() {
+        assertTrue(ContainerUtils.checkContainerName("container-matches", "container-matches", SourceProperties.builder().build()),
+                    "No type source should return true when exact match.");
     }
 
     @Test

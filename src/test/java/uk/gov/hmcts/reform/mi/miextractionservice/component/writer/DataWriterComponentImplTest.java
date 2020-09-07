@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 class DataWriterComponentImplTest {
 
-    private static final SourceProperties SOURCE_PROPERTIES = new SourceProperties();
+    private static final SourceProperties SOURCE_PROPERTIES = SourceProperties.builder().build();
     private static final LocalDate FROM_DATE = LocalDate.of(2000, 1, 1);
     private static final LocalDate TO_DATE = LocalDate.of(2000, 1, 1);
 

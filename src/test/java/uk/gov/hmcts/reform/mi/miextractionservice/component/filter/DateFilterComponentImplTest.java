@@ -29,8 +29,7 @@ class DateFilterComponentImplTest {
         classToTest = new DateFilterComponentImpl();
 
         objectMapper = new ObjectMapper();
-        sourceProperties = new SourceProperties();
-        sourceProperties.setDateField("date_field");
+        sourceProperties = SourceProperties.builder().dateField("date_field").build();
     }
 
     @Test
@@ -49,7 +48,7 @@ class DateFilterComponentImplTest {
         final LocalDate fromDate = LocalDate.parse("1999-02-01");
         final LocalDate toDate = LocalDate.parse("2001-02-01");
 
-        sourceProperties.setTimezone("America/New_York");
+        sourceProperties = SourceProperties.builder().dateField("date_field").timezone("America/New_York").build();
 
         assertTrue(classToTest.filterByDate(data, sourceProperties, fromDate, toDate),
                    "True should be returned for date between range with a timezone.");
