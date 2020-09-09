@@ -52,6 +52,7 @@ resources:
       type: github
       name: hmcts/mi-core-lib
       endpoint: hmcts
+      ref: fix-chart-suffix-on-wait
 
 stages:
   - template: pipeline-steps/templates/build-deploy-stage.yaml@mi-core
