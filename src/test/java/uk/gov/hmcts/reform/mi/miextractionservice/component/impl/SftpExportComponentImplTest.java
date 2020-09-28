@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import uk.gov.hmcts.reform.mi.miextractionservice.component.sftp.SftpExportComponentImpl;
 import uk.gov.hmcts.reform.mi.miextractionservice.exception.ExportException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.when;
 
 @SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith(MockitoExtension.class)
-public class SftpExportComponentImplTest {
+class SftpExportComponentImplTest {
 
     private static final String FIELD_ENABLED = "enabled";
     private static final String CHANNEL_TYPE = "sftp";
@@ -49,7 +50,7 @@ public class SftpExportComponentImplTest {
     private ChannelSftp channelSftp;
 
     @BeforeEach
-    public void setUp() throws JSchException {
+    void setUp() throws JSchException {
         ReflectionTestUtils.setField(classToTest,"port", SFTP_PORT);
         ReflectionTestUtils.setField(classToTest,"remoteUser", SFTP_USER);
         ReflectionTestUtils.setField(classToTest,"remotePassword", SFTP_PASSWORD);
@@ -59,7 +60,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testCopyDisabled() throws SftpException {
+    void testCopyDisabled() throws SftpException {
         ReflectionTestUtils.setField(classToTest, FIELD_ENABLED, false);
 
         classToTest.copyFile(FILE_NAME);
@@ -67,7 +68,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testCopyFile() throws SftpException, JSchException {
+    void testCopyFile() throws SftpException, JSchException {
         when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
 
@@ -79,7 +80,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testCopyFileException() throws SftpException, JSchException {
+    void testCopyFileException() throws SftpException, JSchException {
         when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
 
@@ -89,7 +90,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testCopySessionNonCreated() throws SftpException, JSchException {
+    void testCopySessionNonCreated() throws SftpException, JSchException {
         doThrow(new JSchException()).when(jsch).getSession(SFTP_USER, SFTP_HOST, SFTP_PORT);
         assertThrows(ExportException.class, () -> classToTest.copyFile(FILE_NAME));
         verify(channelSftp, never()).connect(anyInt());
@@ -97,7 +98,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testLoadFile() throws SftpException, JSchException {
+    void testLoadFile() throws SftpException, JSchException {
         when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
         classToTest.loadFile(FILE_NAME, FILE_NAME);
@@ -106,7 +107,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testLoadFileException() throws SftpException, JSchException {
+    void testLoadFileException() throws SftpException, JSchException {
         when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
         doThrow(new SftpException(1, "TestError")).when(channelSftp).get(SFTP_DESTINY_FOLDER + FILE_NAME, FILE_NAME);
@@ -115,7 +116,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testLoadFileSessionNonCreated() throws SftpException, JSchException {
+    void testLoadFileSessionNonCreated() throws SftpException, JSchException {
         doThrow(new JSchException()).when(jsch).getSession(SFTP_USER, SFTP_HOST, SFTP_PORT);
         assertThrows(ExportException.class, () -> classToTest.loadFile(FILE_NAME, FILE_NAME));
         verify(channelSftp, never()).connect(anyInt());
@@ -123,7 +124,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testCheckConnectionDisabled() throws SftpException {
+    void testCheckConnectionDisabled() throws SftpException {
         ReflectionTestUtils.setField(classToTest, FIELD_ENABLED, false);
 
         classToTest.checkConnection();
@@ -131,7 +132,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testCheckConnection() throws SftpException, JSchException {
+    void testCheckConnection() throws SftpException, JSchException {
         when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
 
@@ -141,7 +142,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testCheckConnectionException() throws SftpException, JSchException {
+    void testCheckConnectionException() throws SftpException, JSchException {
         when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
 
@@ -151,7 +152,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testCheckConnectionSessionNonCreated() throws SftpException, JSchException {
+    void testCheckConnectionSessionNonCreated() throws SftpException, JSchException {
         doThrow(new JSchException()).when(jsch).getSession(SFTP_USER, SFTP_HOST, SFTP_PORT);
         assertThrows(ExportException.class, () -> classToTest.checkConnection());
         verify(channelSftp, never()).connect(anyInt());
@@ -160,7 +161,7 @@ public class SftpExportComponentImplTest {
 
 
     @Test
-    public void testCopyFileWhenFolderNotExist() throws SftpException, JSchException {
+    void testCopyFileWhenFolderNotExist() throws SftpException, JSchException {
         when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
         when(channelSftp.stat(SFTP_DESTINY_FOLDER)).thenThrow(new SftpException(ChannelSftp.SSH_FX_NO_SUCH_FILE, "Error"));
@@ -172,7 +173,7 @@ public class SftpExportComponentImplTest {
     }
 
     @Test
-    public void testErrorCreatingFolderPropagateException() throws SftpException, JSchException {
+    void testErrorCreatingFolderPropagateException() throws SftpException, JSchException {
         when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
         when(channelSftp.stat(SFTP_DESTINY_FOLDER)).thenThrow(new SftpException(ChannelSftp.SSH_FX_BAD_MESSAGE, "Error"));

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.mi.miextractionservice.component;
+package uk.gov.hmcts.reform.mi.miextractionservice.component.sftp;
 
 public interface SftpExportComponent {
 

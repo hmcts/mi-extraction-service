@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-public class SftpConfigTest {
+class SftpConfigTest {
 
     private final SftpConfig classToTest = new SftpConfig();
 
     @Test
-    public void testJschCreation() {
+    void testJschCreation() {
         assertNotNull(classToTest.jsch(), "new Jsch expected");
     }
 }

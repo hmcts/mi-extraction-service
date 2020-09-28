@@ -16,11 +16,9 @@ import org.testcontainers.junit.jupiter.Container;
 
 import uk.gov.hmcts.reform.mi.micore.factory.BlobServiceClientFactory;
 import uk.gov.hmcts.reform.mi.miextractionservice.TestConfig;
+import uk.gov.hmcts.reform.mi.miextractionservice.component.sftp.SftpExportComponentImpl;
 import uk.gov.hmcts.reform.mi.miextractionservice.factory.azure.ExtractionBlobServiceClientFactory;
 import uk.gov.hmcts.reform.mi.miextractionservice.service.export.ExportService;
-import uk.gov.hmcts.reform.mi.miextractionservice.component.impl.SftpExportComponentImpl;
-import uk.gov.hmcts.reform.mi.miextractionservice.factory.ExtractionBlobServiceClientFactory;
-import uk.gov.hmcts.reform.mi.miextractionservice.service.BlobExportService;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -63,7 +61,6 @@ public class ExportTest {
 
     private static final String DEFAULT_HOST = "127.0.0.1";
     private static final String EXTRACT_FILE_NAME = "test-1970-01-01-1970-01-02.jsonl.gz";
-    private static final String TEST_MAIL_ADDRESS = "TestMailAddress";
     private static final String TEST_VERIFICATION_FILENAME = "tmp_" + TEST_EXPORT_BLOB;
 
     @Autowired
