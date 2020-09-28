@@ -64,15 +64,14 @@ stages:
       functionalTest: true
       mutationTest: false
       helmRepo: $(helm.repo)
-      envMapping:
-        - key: BUILD_VERSION
-          value: Build.BuildId
       promEnv: $(env.prom)
       azureVault: $(vault)
       azureSecreKeys: 'mi-staging-storage-connection-string,mi-export-storage-connection-string,gov-uk-notify-api-key,mailing-targets'
       envMapping:
-          key: ENV
-          value: $(environment)
+      - key: ENV
+        value: $(environment)
+      - key: BUILD_VERSION
+        value: Build.BuildId
       azureKeyMapping:
         - key: STORAGE_STAGING_CONNECTION_STRING
           value: 'mi-staging-storage-connection-string'
