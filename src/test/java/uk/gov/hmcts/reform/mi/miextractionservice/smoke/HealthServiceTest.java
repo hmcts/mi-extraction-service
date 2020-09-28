@@ -1,14 +1,14 @@
 package uk.gov.hmcts.reform.mi.miextractionservice.smoke;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import uk.gov.hmcts.reform.mi.micore.exception.ServiceNotAvailableException;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.SftpExportComponent;
-import uk.gov.hmcts.reform.mi.miextractionservice.service.BlobExportService;
+import uk.gov.hmcts.reform.mi.miextractionservice.service.export.ExportService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
@@ -16,29 +16,33 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class HealthServiceTest {
+class HealthServiceTest {
 
-    @InjectMocks
+    @Mock private ExportService exportService;
+
     private HealthService classToTest;
-
-    @Mock
-    private BlobExportService blobService;
 
     @Mock
     private SftpExportComponent sftpExportComponent;
 
+    @BeforeEach
+    void setUp() {
+        classToTest = new HealthService(exportService);
+    }
     @Test
-    public void testCheckAllDependencies() throws ServiceNotAvailableException {
+    void testCheckAllDependencies() throws ServiceNotAvailableException {
         classToTest.check();
-        verify(blobService, times(1)).checkStorageConnection();
-        verify(sftpExportComponent, times(1)).checkConnection();
 
+        verify(exportService, times(1)).checkStorageConnection();
+        verify(sftpExportComponent, times(1)).checkConnection();
     }
 
     @Test
-    public void testExceptionOnDependencyFail() {
-        doThrow(new RuntimeException()).when(blobService).checkStorageConnection();
-        assertThrows(ServiceNotAvailableException.class, () -> classToTest.check());
+    void testExceptionOnDependencyFail() {
+        doThrow(new RuntimeException()).when(exportService).checkStorageConnection();
+
+        assertThrows(ServiceNotAvailableException.class, () -> classToTest.check(),
+                     "Should throw ServiceNotAvailableException when health check fails.");
     }
 
     @Test

@@ -34,7 +34,7 @@ variables:
   product: 'mi'
   vault: 'mi-vault-$(env)'
   azure.prom.acr: 'ssprivate$(env.prom)'
-  helmRepo: 'ssprivate-$(env)'
+  helm.repo: 'ssprivate$(env)'
 
 resources:
   repositories:
@@ -54,6 +54,10 @@ stages:
       promEnv: $(env.prom)
       functionalTest: true
       mutationTest: true
+      helmRepo: $(helm.repo)
+      envMapping:
+        - key: BUILD_VERSION
+          value: Build.BuildId
       azureVault: $(vault)
       azureSecreKeys: 'mi-staging-storage-connection-string,mi-export-storage-connection-string,gov-uk-notify-api-key,mailing-targets'
       azureKeyMapping:

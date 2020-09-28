@@ -8,15 +8,14 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.mi.micore.component.HealthCheck;
 import uk.gov.hmcts.reform.mi.micore.exception.ServiceNotAvailableException;
 import uk.gov.hmcts.reform.mi.miextractionservice.component.SftpExportComponent;
-import uk.gov.hmcts.reform.mi.miextractionservice.service.BlobExportService;
+import uk.gov.hmcts.reform.mi.miextractionservice.service.export.ExportService;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class HealthService implements HealthCheck {
 
-    @Autowired
-    private final BlobExportService blobService;
+    private final ExportService exportService;
 
     @Autowired
     private final SftpExportComponent sftpExportComponent;
@@ -24,7 +23,7 @@ public class HealthService implements HealthCheck {
     @Override
     public void check() throws ServiceNotAvailableException {
         try {
-            blobService.checkStorageConnection();
+            exportService.checkStorageConnection();
             sftpExportComponent.checkConnection();
             log.info("Health check completed");
         } catch (Exception e) {
