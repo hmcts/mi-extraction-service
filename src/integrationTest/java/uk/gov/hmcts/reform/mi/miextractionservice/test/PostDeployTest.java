@@ -33,8 +33,11 @@ public class PostDeployTest {
     @Autowired
     private BlobServiceClientFactory blobServiceClientFactory;
 
-    @Autowired
+    @Autowired(required = false)
     private SftpClient sftpClient;
+
+    @Value("${sftp.enabled:false}")
+    private boolean enabled;
 
     private BlobServiceClient exportBlobServiceClient;
 
@@ -66,9 +69,11 @@ public class PostDeployTest {
 
     @Test
     public void givenTestBlob_whenExportBlobData_thenTestBlobsExistInSftpServer() throws SftpException {
-        sftpClient.loadFile(TEST_EXPORT_BLOB, TEST_EXPORT_BLOB);
-        File verificationFile = new File(TEST_EXPORT_BLOB);
-        assertTrue(verificationFile.exists(), "Should send file to sftp server");
-        sftpClient.deleteFile(TEST_EXPORT_BLOB);
+        if (enabled) {
+            sftpClient.loadFile(TEST_EXPORT_BLOB, TEST_EXPORT_BLOB);
+            File verificationFile = new File(TEST_EXPORT_BLOB);
+            assertTrue(verificationFile.exists(), "Should send file to sftp server");
+            sftpClient.deleteFile(TEST_EXPORT_BLOB);
+        }
     }
 }

@@ -11,6 +11,7 @@ mi-job:
     RETRIEVE_FROM_DATE: 1970-01-01
     RETRIEVE_TO_DATE: 1970-01-02
     SFTP_ENABLED: true
+    SFTP_REMOTE_HOST: mi-sftp-server-svc
 
 global:
   subscriptionId: "3eec5bde-7feb-4566-bfb6-805df6e10b90"

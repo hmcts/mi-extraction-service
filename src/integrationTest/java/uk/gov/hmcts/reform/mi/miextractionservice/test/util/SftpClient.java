@@ -7,6 +7,7 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -14,6 +15,7 @@ import javax.annotation.PreDestroy;
 
 @Component
 @Slf4j
+@ConditionalOnProperty(name = "sftp.enabled",havingValue = "true")
 public class SftpClient {
 
     private static final String PROTOCOL = "sftp";
