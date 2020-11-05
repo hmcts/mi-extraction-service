@@ -86,7 +86,6 @@ class SftpExportComponentImplTest {
         verify(session, times(1)).setPassword(SFTP_PASSWORD);
         verify(session, times(1)).setConfig("StrictHostKeyChecking", "no");
         verify(session, times(1)).connect(60_000);
-
     }
 
     @Test
