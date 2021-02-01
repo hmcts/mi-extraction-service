@@ -233,4 +233,13 @@ class SftpExportComponentImplTest {
         verify(session, times(1)).setConfig("StrictHostKeyChecking", "no");
         verify(session, times(1)).connect(60_000);
     }
+
+    @Test
+    void testLoadFileWithSource() throws SftpException, JSchException {
+        when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
+        when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
+        classToTest.loadFile(FILE_NAME, SOURCE, FILE_NAME);
+        verify(channelSftp, times(1)).get(SOURCE_DESTINY_FOLDER + FILE_NAME, FILE_NAME);
+        verify(session, times(1)).disconnect();
+    }
 }

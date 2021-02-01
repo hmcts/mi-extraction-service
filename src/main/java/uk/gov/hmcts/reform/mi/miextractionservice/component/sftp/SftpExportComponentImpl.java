@@ -120,11 +120,22 @@ public class SftpExportComponentImpl implements SftpExportComponent {
 
     @Override
     public void loadFile(String file, String destinyFilePath) {
+        loadFile(file, null, destinyFilePath);
+    }
+
+    @Override
+    public void loadFile(String file, String source, String destinyFilePath) {
         Session session = null;
         try {
             session = getJshSession();
             ChannelSftp sftpChannel = setupStpChannel(session);
-            sftpChannel.get(destinyFolder + file, destinyFilePath);
+            String folderName = destinyFolder;
+            if (nonNull(source)) {
+                folderName = folderName
+                    .concat(source)
+                    .concat(FOLDER_DELIMITER);
+            }
+            sftpChannel.get(folderName + file, destinyFilePath);
         } catch (JSchException | SftpException e) {
             throw new ExportException("Unable to send file to sftp server", e);
         } finally {

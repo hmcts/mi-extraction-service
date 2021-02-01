@@ -8,6 +8,8 @@ public interface SftpExportComponent {
 
     void loadFile(String file, String destinyFilePath);
 
+    void loadFile(String file, String source, String destinyFilePath);
+
     void checkConnection();
 
 }
