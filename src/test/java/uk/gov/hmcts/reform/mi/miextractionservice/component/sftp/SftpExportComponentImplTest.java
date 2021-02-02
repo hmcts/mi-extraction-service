@@ -38,8 +38,8 @@ class SftpExportComponentImplTest {
     private static final String SFTP_DESTINY_FOLDER = "upload/";
     private static final String FILE_NAME = "file.txt";
 
-    private static final String SOURCE = "source";
-    private static final String SOURCE_DESTINY_FOLDER = "upload/source/";
+    private static final String SFTP_DIR = "source";
+    private static final String SFTP_DIR_DESTINY_FOLDER = "upload/source/";
 
     private SftpExportComponentImpl classToTest;
     @Mock
@@ -224,10 +224,10 @@ class SftpExportComponentImplTest {
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
         when(pgpEncryptionComponentImpl.encryptDataToFile(FILE_NAME)).thenReturn(FILE_NAME);
 
-        classToTest.copyFile(FILE_NAME, SOURCE);
-        verify(channelSftp, times(1)).put(FILE_NAME, SOURCE_DESTINY_FOLDER + FILE_NAME);
+        classToTest.copyFile(FILE_NAME, SFTP_DIR);
+        verify(channelSftp, times(1)).put(FILE_NAME, SFTP_DIR_DESTINY_FOLDER + FILE_NAME);
         verify(session, times(1)).disconnect();
-        verify(channelSftp, times(1)).stat(SOURCE_DESTINY_FOLDER);
+        verify(channelSftp, times(1)).stat(SFTP_DIR_DESTINY_FOLDER);
 
         verify(session, times(1)).setPassword(SFTP_PASSWORD);
         verify(session, times(1)).setConfig("StrictHostKeyChecking", "no");
@@ -238,8 +238,8 @@ class SftpExportComponentImplTest {
     void testLoadFileWithSource() throws SftpException, JSchException {
         when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
-        classToTest.loadFile(FILE_NAME, SOURCE, FILE_NAME);
-        verify(channelSftp, times(1)).get(SOURCE_DESTINY_FOLDER + FILE_NAME, FILE_NAME);
+        classToTest.loadFile(FILE_NAME, SFTP_DIR, FILE_NAME);
+        verify(channelSftp, times(1)).get(SFTP_DIR_DESTINY_FOLDER + FILE_NAME, FILE_NAME);
         verify(session, times(1)).disconnect();
     }
 }

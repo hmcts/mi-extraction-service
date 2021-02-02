@@ -50,7 +50,7 @@ public class SftpExportComponentImpl implements SftpExportComponent {
     }
 
     @Override
-    public void copyFile(String file, String source) {
+    public void copyFile(String file, String directory) {
         if (enabled) {
             String fileToCopy = getEncryptedFileName(file);
             Session session = null;
@@ -59,9 +59,9 @@ public class SftpExportComponentImpl implements SftpExportComponent {
                 setupStpChannel(session);
                 ChannelSftp sftpChannel = setupStpChannel(session);
                 String folderName = destinyFolder;
-                if (nonNull(source)) {
+                if (nonNull(directory)) {
                     folderName = folderName
-                        .concat(source)
+                        .concat(directory)
                         .concat(FOLDER_DELIMITER);
                 }
                 checkFolder(sftpChannel, folderName);
@@ -124,15 +124,15 @@ public class SftpExportComponentImpl implements SftpExportComponent {
     }
 
     @Override
-    public void loadFile(String file, String source, String destinyFilePath) {
+    public void loadFile(String file, String directory, String destinyFilePath) {
         Session session = null;
         try {
             session = getJshSession();
             ChannelSftp sftpChannel = setupStpChannel(session);
             String folderName = destinyFolder;
-            if (nonNull(source)) {
+            if (nonNull(directory)) {
                 folderName = folderName
-                    .concat(source)
+                    .concat(directory)
                     .concat(FOLDER_DELIMITER);
             }
             sftpChannel.get(folderName + file, destinyFilePath);
