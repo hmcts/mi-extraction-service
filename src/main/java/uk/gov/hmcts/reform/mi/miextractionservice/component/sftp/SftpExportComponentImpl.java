@@ -8,12 +8,17 @@ import com.jcraft.jsch.SftpException;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.jodah.failsafe.Failsafe;
+import net.jodah.failsafe.FailsafeException;
+import net.jodah.failsafe.RetryPolicy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import uk.gov.hmcts.reform.mi.miextractionservice.component.encryption.PgpEncryptionComponentImpl;
 import uk.gov.hmcts.reform.mi.miextractionservice.exception.ExportException;
 import uk.gov.hmcts.reform.mi.miextractionservice.util.FileUtils;
+
+import java.time.Duration;
 
 import static java.util.Objects.nonNull;
 
@@ -58,16 +63,20 @@ public class SftpExportComponentImpl implements SftpExportComponent {
                 session = getJshSession();
                 setupStpChannel(session);
                 ChannelSftp sftpChannel = setupStpChannel(session);
-                String folderName = destinyFolder;
-                if (nonNull(directory)) {
-                    folderName = folderName
-                        .concat(directory)
-                        .concat(FOLDER_DELIMITER);
-                }
+                final String folderName = nonNull(directory)
+                    ? destinyFolder.concat(directory).concat(FOLDER_DELIMITER)
+                    : destinyFolder;
                 checkFolder(sftpChannel, folderName);
-                sftpChannel.put(fileToCopy, folderName + fileToCopy);
 
-            } catch (JSchException | SftpException e) {
+                RetryPolicy<Object> retryPolicy = new RetryPolicy<>()
+                    .handle(SftpException.class)
+                    .withDelay(Duration.ofSeconds(2L))
+                    .withMaxRetries(3);
+
+                Failsafe.with(retryPolicy).run(
+                    () -> sftpChannel.put(fileToCopy, folderName + fileToCopy)
+                );
+            } catch (JSchException | SftpException | FailsafeException e) {
                 throw new ExportException("Unable to send file to sftp server " + fileToCopy, e);
             } finally {
                 if (session != null) {
@@ -129,12 +138,9 @@ public class SftpExportComponentImpl implements SftpExportComponent {
         try {
             session = getJshSession();
             ChannelSftp sftpChannel = setupStpChannel(session);
-            String folderName = destinyFolder;
-            if (nonNull(directory)) {
-                folderName = folderName
-                    .concat(directory)
-                    .concat(FOLDER_DELIMITER);
-            }
+            final String folderName = nonNull(directory)
+                ? destinyFolder.concat(directory).concat(FOLDER_DELIMITER)
+                : destinyFolder;
             sftpChannel.get(folderName + file, destinyFilePath);
         } catch (JSchException | SftpException e) {
             throw new ExportException("Unable to send file to sftp server", e);

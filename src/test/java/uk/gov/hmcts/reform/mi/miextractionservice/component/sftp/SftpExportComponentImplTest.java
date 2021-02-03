@@ -219,7 +219,7 @@ class SftpExportComponentImplTest {
     }
 
     @Test
-    void testCopyFileWithSource() throws  SftpException, JSchException {
+    void testCopyFileWithDirectory() throws  SftpException, JSchException {
         when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
         when(pgpEncryptionComponentImpl.encryptDataToFile(FILE_NAME)).thenReturn(FILE_NAME);
@@ -235,7 +235,30 @@ class SftpExportComponentImplTest {
     }
 
     @Test
-    void testLoadFileWithSource() throws SftpException, JSchException {
+    void testCopyFileExceptionWithRetries() throws SftpException, JSchException {
+        when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
+        when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
+        when(pgpEncryptionComponentImpl.encryptDataToFile(FILE_NAME)).thenReturn(FILE_NAME);
+
+        doThrow(new SftpException(1, "TestError"))
+            .doThrow(new SftpException(2, "SecondTryError"))
+            .doNothing()
+            .when(channelSftp).put(FILE_NAME, SFTP_DESTINY_FOLDER + FILE_NAME);
+
+        classToTest.copyFile(FILE_NAME);
+
+        verify(channelSftp, times(3)).put(FILE_NAME, SFTP_DESTINY_FOLDER + FILE_NAME);
+        verify(session, times(1)).disconnect();
+        verify(channelSftp, times(1)).stat(SFTP_DESTINY_FOLDER);
+
+        verify(session, times(1)).setPassword(SFTP_PASSWORD);
+        verify(session, times(1)).setConfig("StrictHostKeyChecking", "no");
+        verify(session, times(1)).connect(60_000);
+    }
+
+
+    @Test
+    void testLoadFileWithDirectory() throws SftpException, JSchException {
         when(jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT)).thenReturn(session);
         when(session.openChannel(CHANNEL_TYPE)).thenReturn(channelSftp);
         classToTest.loadFile(FILE_NAME, SFTP_DIR, FILE_NAME);
