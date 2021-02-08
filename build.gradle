@@ -185,7 +185,7 @@ def versions = [
   piTestSonar      : '0.5',
   springBootMail   : '2.2.2.RELEASE',
   springfoxSwagger : '2.9.2',
-  testContainers   : '1.12.3',
+  testContainers   : '1.15.1',
   zip4j            : '2.3.1',
   jcraft           : '0.1.55',
   bouncycastle     : '1.64'
