@@ -178,7 +178,7 @@ def versions = [
   hmctsNotify      : '3.15.1-RELEASE',
   junit            : '5.5.0',
   miCoreLib        : '3.5.2',
-  reformLogging    : '5.1.9',
+  reformLogging    : '5.1.1',
   openCsv          : '5.1',
   piTest           : '1.5.2',
   piTestGradle     : '1.5.2',
@@ -198,7 +198,7 @@ dependencies {
 
   implementation group: 'com.microsoft.azure', name: 'azure-spring-boot-starter', version: versions.azureSpringBoot
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: versions.springBootMail
-  implementation group: 'com.microsoft.azure', name: 'applicationinsights-core', version: '2.6.3'
+  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.4.0'
 
   implementation group: 'com.opencsv', name: 'opencsv', version: versions.openCsv
   implementation group: 'net.lingala.zip4j', name: 'zip4j', version: versions.zip4j
@@ -212,7 +212,8 @@ dependencies {
   implementation group: 'com.jcraft', name: 'jsch', version: versions.jcraft
 
   implementation group: 'com.github.hmcts', name: 'mi-core-lib', version: versions.miCoreLib
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.reformLogging
+  //  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.reformLogging
+  //  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: versions.reformLogging
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: versions.hmctsNotify
 
   implementation group: 'org.pitest', name: 'pitest', version: versions.piTest
