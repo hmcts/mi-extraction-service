@@ -15,7 +15,11 @@ import java.io.ByteArrayInputStream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.*;
+import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.DASH_DELIMITER;
+import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.EXPORT_CONTAINER_NAME;
+import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.TEST_BLOB_NAME;
+import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.TEST_CONTAINER_NAME;
+import static uk.gov.hmcts.reform.mi.miextractionservice.data.TestConstants.TEST_JSONL;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.util.TestUtils.cleanUpTestFiles;
 import static uk.gov.hmcts.reform.mi.miextractionservice.test.util.TestUtils.createTestBlob;
 
