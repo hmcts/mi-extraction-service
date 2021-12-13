@@ -59,7 +59,7 @@ stages:
       preIntegrationTest: true
       functionalTest: true
       mutationTest: false
-      dependencyCheck: true
+      dependencyCheck: false
       helmRepo: $(helm.repo)
       agentPool: hmcts-ss-$(environment)
       promEnv: $(env.prom)
