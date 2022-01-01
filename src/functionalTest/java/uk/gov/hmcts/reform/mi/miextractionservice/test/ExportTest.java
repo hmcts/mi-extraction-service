@@ -50,7 +50,12 @@ public class ExportTest {
 
     private static final String AZURITE_IMAGE = "mcr.microsoft.com/azure-storage/azurite";
 
-    private static final String SFTP_SERVER_IMAGE = "atmoz/sftp:alpine";
+    /*
+        Latest Atomz SFTP doesn't support jsch protocols by default.
+        Latest OpenSSH disables some protocols used by jsch for security reasons.
+        We need to migrate to a different modern SFTP library.
+    */
+    private static final String SFTP_SERVER_IMAGE = "atmoz/sftp:alpine-3.7";
     private static final Integer DEFAULT_PORT = 10_000;
     private static final Integer SFTP_PORT = 22;
 
