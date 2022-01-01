@@ -179,8 +179,9 @@ public class ExportTest {
             exportBlobServiceClient.getBlobContainerClient(EXPORT_CONTAINER_NAME).getBlobClient(TEST_EXPORT_BLOB).download(outputStream);
         }
 
-        ZipFile zipFile = new ZipFile(TEST_EXPORT_BLOB);
-        zipFile.extractFile(EXTRACT_FILE_NAME, ".");
+        try (ZipFile zipFile = new ZipFile(TEST_EXPORT_BLOB)) {
+            zipFile.extractFile(EXTRACT_FILE_NAME, ".");
+        }
 
         assertTrue(new File(EXTRACT_FILE_NAME).exists(), "Expected archived file to be extracted.");
 
