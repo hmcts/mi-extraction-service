@@ -146,12 +146,12 @@ dependencyUpdates.resolutionStrategy {
 }
 
 def versions = [
-  azureAppInsights : '2.6.4',
   azureSpringBoot  : '3.11.0',
   azureStorage     : '12.14.2',
   commonsIo        : '2.11.0',
   dumbster         : '1.7.1',
   failsafe         : '2.4.4',
+  hmctsLogging     : '5.1.9',
   hmctsNotify      : '3.17.2-RELEASE',
   junit            : '5.8.2',
   miCoreLib        : '3.6.0-draft-3',
@@ -233,7 +233,6 @@ dependencies {
 
   implementation group: 'com.azure.spring', name: 'azure-spring-boot-starter', version: versions.azureSpringBoot
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: versions.springBootMail
-  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: versions.azureAppInsights
   implementation group: 'com.azure', name: 'azure-storage-blob', version: versions.azureStorage
 
   implementation group: 'com.opencsv', name: 'opencsv', version: versions.openCsv
@@ -245,6 +244,8 @@ dependencies {
   implementation group: 'com.jcraft', name: 'jsch', version: versions.jcraft
 
   implementation group: 'com.github.hmcts', name: 'mi-core-lib', version: versions.miCoreLib
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.hmctsLogging
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: versions.hmctsLogging
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: versions.hmctsNotify
 
   implementation group: 'org.pitest', name: 'pitest', version: versions.piTest
