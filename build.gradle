@@ -154,7 +154,7 @@ def versions = [
   hmctsLogging     : '5.1.9',
   hmctsNotify      : '3.17.2-RELEASE',
   junit            : '5.8.2',
-  miCoreLib        : '3.6.0-draft-3',
+  miCoreLib        : '3.6.0',
   openCsv          : '5.5.2',
   piTest           : '1.7.3',
   piTestGradle     : '1.7.0',
