@@ -218,6 +218,7 @@ dependencyManagement {
       entry 'spring-aop'
       entry 'spring-beans'
       entry 'spring-context'
+      entry 'spring-context-support'
       entry 'spring-core'
       entry 'spring-expression'
       entry 'spring-jcl'
